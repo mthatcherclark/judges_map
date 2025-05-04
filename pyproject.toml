@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "judgemap"
+version = "0.1.0"
+description = ""
+authors = ["Matt Clark matt.clark@cbsnews.com"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+requests = "^2.32.3"
+pandas = "^2.2.3"
+ipykernel = "^6.29.5"
+geojson = "^3.2.0"
+shapely = "^2.1.0"
+leafmap = {extras = ["maplibre"], version = "^0.43.11"}
+geopandas = "^1.0.1"
+numpy = "^2.2.5"
+deepdiff = "^8.4.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
