@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>MapLibre Home Filter from URL</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+  <style>
+    body { margin: 0; padding: 0; }
+    #map { position: absolute; top: 80px; bottom: 0; width: 100%; }
+    #controls {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: white;
+      z-index: 1;
+      padding: 10px;
+    }
+    #slider-container { margin-top: 10px; }
+    button { margin-right: 10px; }
+  </style>
+</head>
+<body>
+<div id="controls">
+  <button id="show-all">All</button>
+  <button id="show-for-sale">For Sale</button>
+  <div id="slider-container">
+    <label for="yearSlider">Year built ≥ <span id="year-value">...</span></label><br />
+    <input type="range" id="yearSlider" min="0" max="0" value="0" step="1">
+  </div>
+</div>
+<div id="map"></div>
+
+<script>
+  const geojsonURL = 'https://mthatcherclark.github.io/judges_map/homes_data.geojson';
+
+  let currentFilter = 'all';
+  let map;
+  let homesData;
+
+  const yearSlider = document.getElementById('yearSlider');
+  const yearValue = document.getElementById('year-value');
+
+  function updateFilter() {
+    const yearThreshold = parseInt(yearSlider.value);
+    yearValue.textContent = yearThreshold;
+
+    let filter = ['>=', ['get', 'year_built'], yearThreshold];
+
+    if (currentFilter === 'for_sale') {
+      filter = ['all',
+        ['==', ['get', 'for_sale'], true],
+        ['>=', ['get', 'year_built'], yearThreshold]
+      ];
+    }
+
+    map.setFilter('home-points', filter);
+  }
+
+  function setupSlider(years) {
+    const minYear = Math.min(...years);
+    const maxYear = Math.max(...years);
+    yearSlider.min = minYear;
+    yearSlider.max = maxYear;
+    yearSlider.value = minYear;
+    yearValue.textContent = minYear;
+    yearSlider.addEventListener('input', updateFilter);
+  }
+
+  async function initMap() {
+    const response = await fetch(geojsonURL);
+    homesData = await response.json();
+
+    const years = homesData.features.map(f => f.properties.year_built);
+    setupSlider(years);
+
+    map = new maplibregl.Map({
+      container: 'map',
+      style: 'https://raw.githubusercontent.com/go2garret/maps/main/src/assets/json/openStreetMap.json',
+      center: [-157.85, 21.35],
+      zoom: 12
+    });
+
+    map.on('load', () => {
+      map.addSource('homes', {
+        type: 'geojson',
+        data: homesData
+      });
+
+      map.addLayer({
+        id: 'home-points',
+        type: 'circle',
+        source: 'homes',
+        paint: {
+          'circle-radius': 6,
+          'circle-color': '#007cbf'
+        }
+      });
+
+      document.getElementById('show-all').addEventListener('click', () => {
+        currentFilter = 'all';
+        updateFilter();
+      });
+
+      document.getElementById('show-for-sale').addEventListener('click', () => {
+        currentFilter = 'for_sale';
+        updateFilter();
+      });
+
+      updateFilter(); // apply initial filter
+    });
+  }
+
+  initMap().catch(err => console.error('Failed to load map or data:', err));
+</script>
+
+<script>
+    function updateButtonStyles() {
+        const allButton = document.getElementById('show-all');
+        const forSaleButton = document.getElementById('show-for-sale');
+
+        if (currentFilter === 'all') {
+            allButton.style.backgroundColor = '#007cbf';
+            allButton.style.color = 'white';
+            forSaleButton.style.backgroundColor = '';
+            forSaleButton.style.color = '';
+        } else if (currentFilter === 'for_sale') {
+            forSaleButton.style.backgroundColor = '#007cbf';
+            forSaleButton.style.color = 'white';
+            allButton.style.backgroundColor = '';
+            allButton.style.color = '';
+        }
+    }
+
+    document.getElementById('show-all').addEventListener('click', () => {
+        currentFilter = 'all';
+        updateFilter();
+        updateButtonStyles();
+    });
+
+    document.getElementById('show-for-sale').addEventListener('click', () => {
+        currentFilter = 'for_sale';
+        updateFilter();
+        updateButtonStyles();
+    });
+</script>
+
+
+</body>
+</html>
