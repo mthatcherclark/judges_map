@@ -54,21 +54,21 @@
     <div class="map-overlay-inner">
         <nav id="nav-filter">
             <fieldset>
-                <legend>🫨 Earthquake <code>felt</code>?</legend>
+                <legend>Homes For Sale</legend>
                 <div>
-                    <input id="felt" type="checkbox" />
-                    <label for="felt">Apply <code>felt</code> Filter</label>
+                    <input id="year_built" type="checkbox" />
+                    <label for="year_built">Apply Year Built Filter</label>
                     <div>
                         <div>
-                            <label for="operator-felt">Operator:</label>
-                            <select name="operator" id="operator-felt">
+                            <label for="operator-year_built">Operator:</label>
+                            <select name="operator" id="operator-year_built">
                                 <option value=">">></option>
                                 <option value="==" selected>==</option>
                                 <option value="<"><</option>
                             </select>
                             <br>
-                            <label for="range-felt">Felt:</label>
-                            <input type="number" id="range-felt" name="range" value="4" min="1.0" max="10000" />
+                            <label for="range-year_built">year_built:</label>
+                            <input type="number" id="range-year_built" name="range" value="4" min="1.0" max="10000" />
                         </div>
                     </div>
             </fieldset>
@@ -111,32 +111,13 @@
         let operator = '==';
 
         switch (e.target.id) {
-            /// example: `map.setFilter("earthquakes", ["any", [">", "felt", 16.0]])`
-            case 'felt':
-                operatorFelt = document.getElementById('operator-felt');
-                felt = document.getElementById('range-felt');
-                operator = operatorFelt.value;
+            /// example: `map.setFilter("earthquakes", ["any", [">", "year_built", 16.0]])`
+            case 'year_built':
+                operatorYearBuilt = document.getElementById('operator-year_built');
+                year_built = document.getElementById('range-year_built');
+                operator = operatorYearBuilt.value;
 
-                e.target.checked ? data.felt = Number(felt.value) : delete data['felt'];
-
-                break;
-
-            /// example: `map.setFilter("earthquakes", ["any", [">", "mag", 5.0]])`
-            case 'mag':
-                operatorMag = document.getElementById('operator-mag');
-                mag = document.getElementById('range-mag');
-                operator = operatorMag.value;
-
-                e.target.checked ? data.mag = Number(mag.value) : delete data['mag'];
-
-                break;
-
-            /// example: `map.setFilter("earthquakes", ["any", [">", "tsunami", 0]])`
-            case 'tsunami':
-                tsunami = document.querySelector('input[type="radio"][name=tsunami]:checked');
-                operator = '==';
-
-                e.target.checked ? data.tsunami = Number(tsunami.value) : delete data['tsunami'];
+                e.target.checked ? data.year_built = Number(year_built.value) : delete data['year_built'];
 
                 break;
             default:
