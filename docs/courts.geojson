@@ -1,0 +1,293 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "court_id": "district_1",
+        "court_type": "district",
+        "start_date": "1900-01-01",
+        "end_date": "1949-12-31"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -125,
+              30
+            ],
+            [
+              -124.0,
+              30
+            ],
+            [
+              -124.0,
+              31.0
+            ],
+            [
+              -125,
+              31.0
+            ],
+            [
+              -125,
+              30
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "court_id": "district_1",
+        "court_type": "district",
+        "start_date": "1950-01-01",
+        "end_date": "1999-12-31"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -125,
+              30
+            ],
+            [
+              -124.0,
+              30
+            ],
+            [
+              -124.0,
+              31.0
+            ],
+            [
+              -125,
+              31.0
+            ],
+            [
+              -125,
+              30
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "court_id": "district_2",
+        "court_type": "district",
+        "start_date": "1900-01-01",
+        "end_date": "1949-12-31"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -100,
+              35
+            ],
+            [
+              -99.0,
+              35
+            ],
+            [
+              -99.0,
+              36.0
+            ],
+            [
+              -100,
+              36.0
+            ],
+            [
+              -100,
+              35
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "court_id": "district_2",
+        "court_type": "district",
+        "start_date": "1950-01-01",
+        "end_date": "1999-12-31"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -100,
+              35
+            ],
+            [
+              -99.0,
+              35
+            ],
+            [
+              -99.0,
+              36.0
+            ],
+            [
+              -100,
+              36.0
+            ],
+            [
+              -100,
+              35
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "court_id": "circuit_1",
+        "court_type": "circuit",
+        "start_date": "1900-01-01",
+        "end_date": "1949-12-31"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -95,
+              40
+            ],
+            [
+              -94.0,
+              40
+            ],
+            [
+              -94.0,
+              41.0
+            ],
+            [
+              -95,
+              41.0
+            ],
+            [
+              -95,
+              40
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "court_id": "circuit_1",
+        "court_type": "circuit",
+        "start_date": "1950-01-01",
+        "end_date": "1999-12-31"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -95,
+              40
+            ],
+            [
+              -94.0,
+              40
+            ],
+            [
+              -94.0,
+              41.0
+            ],
+            [
+              -95,
+              41.0
+            ],
+            [
+              -95,
+              40
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "court_id": "circuit_2",
+        "court_type": "circuit",
+        "start_date": "1900-01-01",
+        "end_date": "1949-12-31"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -85,
+              30
+            ],
+            [
+              -84.0,
+              30
+            ],
+            [
+              -84.0,
+              31.0
+            ],
+            [
+              -85,
+              31.0
+            ],
+            [
+              -85,
+              30
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "court_id": "circuit_2",
+        "court_type": "circuit",
+        "start_date": "1950-01-01",
+        "end_date": "1999-12-31"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -85,
+              30
+            ],
+            [
+              -84.0,
+              30
+            ],
+            [
+              -84.0,
+              31.0
+            ],
+            [
+              -85,
+              31.0
+            ],
+            [
+              -85,
+              30
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
