@@ -45,8 +45,8 @@ let map = new maplibregl.Map({
 let polygonsData = null;
 let judgeCounts = null;
 
-const minDate = new Date("1900-01-01");
-const maxDate = new Date("2020-01-01");
+const minDate = new Date("1912-01-01");
+const maxDate = new Date("2025-05-04");
 
 function daysBetween(start, end) {
   return Math.floor((end - start) / (1000 * 60 * 60 * 24));
@@ -129,6 +129,21 @@ function updatePolygons() {
 
 document.getElementById('courtType').addEventListener('change', updatePolygons);
 document.getElementById('dateSlider').addEventListener('input', updatePolygons);
+
+map.on('click', 'courts-layer', (e) => {
+    const props = e.features[0].properties;
+    new maplibregl.Popup()
+        .setLngLat(e.lngLat)
+        .setHTML(`<strong>Court ID:</strong> ${props.court_id}`)
+        .addTo(map);
+});
+
+map.on('mouseenter', 'courts-layer', () => {
+    map.getCanvas().style.cursor = 'pointer';
+});
+map.on('mouseleave', 'courts-layer', () => {
+    map.getCanvas().style.cursor = '';
+});
 
 map.on('load', loadData);
 </script>
