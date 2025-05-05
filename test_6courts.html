@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <title>Judicial Courts by Date</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
-  <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+  <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.4.0/dist/maplibre-gl.css' />
+  <script src='https://unpkg.com/maplibre-gl@5.4.0/dist/maplibre-gl.js'></script>
   <style>
     body, html { margin: 0; padding: 0; height: 100%; }
     #map { width: 100%; height: 100%; }
@@ -14,6 +14,9 @@
       top: 10px; left: 10px;
       background: white; padding: 10px;
       font-family: sans-serif; z-index: 1000;
+    }
+    #dateLabel {
+      font-weight: bold;
     }
   </style>
 </head>
@@ -25,9 +28,9 @@
     <option value="district">District</option>
     <option value="circuit">Circuit</option>
   </select>
-  <br>
-  <label for="dateSlider">Date:</label>
-  <input type="date" id="dateSlider" value="1900-01-01" min="1900-01-01" max="2020-01-01" />
+  <br><br>
+  <label for="dateSlider">Date: <span id="dateLabel">1900-01-01</span></label><br>
+  <input type="range" id="dateSlider" min="0" max="43830" value="0" step="1" />
 </div>
 
 <div id="map"></div>
@@ -35,17 +38,30 @@
 <script>
 let map = new maplibregl.Map({
   container: 'map',
-  style: 'https://demotiles.maplibre.org/style.json',
+  style: 'https://raw.githubusercontent.com/go2garret/maps/main/src/assets/json/openStreetMap.json',
   center: [-98, 39], zoom: 3
 });
 
 let polygonsData = null;
 let judgeCounts = null;
 
+const minDate = new Date("1900-01-01");
+const maxDate = new Date("2020-01-01");
+
+function daysBetween(start, end) {
+  return Math.floor((end - start) / (1000 * 60 * 60 * 24));
+}
+
+function dateFromSlider(value) {
+  const d = new Date(minDate.getTime());
+  d.setDate(d.getDate() + parseInt(value));
+  return d.toISOString().split("T")[0];
+}
+
 async function loadData() {
   const [geo, judges] = await Promise.all([
-    fetch("courts.geojson").then(r => r.json()),
-    fetch("judge_counts.json").then(r => r.json())
+    fetch("https://mthatcherclark.github.io/judges_map/courts.geojson").then(r => r.json()),
+    fetch("https://mthatcherclark.github.io/judges_map/judge_counts.json").then(r => r.json())
   ]);
   polygonsData = geo;
   judgeCounts = judges;
@@ -64,7 +80,9 @@ function getJudgeCountOnDate(judgeData, dateStr) {
 
 function updatePolygons() {
   const courtType = document.getElementById('courtType').value;
-  const dateStr = document.getElementById('dateSlider').value;
+  const sliderValue = document.getElementById('dateSlider').value;
+  const dateStr = dateFromSlider(sliderValue);
+  document.getElementById('dateLabel').textContent = dateStr;
 
   const filtered = polygonsData.features
     .filter(f => f.properties.court_type === courtType)

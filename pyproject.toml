@@ -2,7 +2,7 @@
 name = "judgemap"
 version = "0.1.0"
 description = ""
-authors = ["Matt Clark matt.clark@cbsnews.com"]
+authors = ["Matt Clark <matt.clark@cbsnews.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
