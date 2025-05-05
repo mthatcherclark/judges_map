@@ -60,7 +60,7 @@ function dateFromSlider(value) {
 
 async function loadData() {
   const [geo, judges] = await Promise.all([
-    fetch("https://mthatcherclark.github.io/judges_map/courts.geojson").then(r => r.json()),
+    fetch("https://mthatcherclark.github.io/judges_map/circuits.geojson").then(r => r.json()),
     fetch("https://mthatcherclark.github.io/judges_map/judge_counts.json").then(r => r.json())
   ]);
   polygonsData = geo;
