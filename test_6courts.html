@@ -113,14 +113,14 @@ function updatePolygons() {
       type: 'fill',
       source: 'courts',
       paint: {
-        'fill-color': [
-          'interpolate',
-          ['linear'],
-          ['get', 'rep_percentage'],
-          0, '#08306b',   // Dark blue
-          0.5, '#f0f0f0', // Light gray
-          1, '#67000d'    // Dark red
-        ],
+              'fill-color': [
+                'interpolate',
+                ['linear'],
+                ['get', 'rep_percentage'],  // This is your float, 0 to 1
+                0,    '#0077FF',   // 0% Republican
+                0.5,  '#CCCCCC',   // 50% Neutral
+                1.0,  '#FF0000'    // 100% Republican
+              ],
         'fill-opacity': 0.8
       }
     });
