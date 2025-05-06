@@ -96,6 +96,7 @@ function updatePolygons() {
       const cid = f.properties.court_id;
       const count = getJudgeCountOnDate(judgeCounts[cid] || {}, dateStr);
       f.properties.judge_count = (count && count[0]) || 0;
+      f.properties.rep_percentage = (count && count[1]) || 0;
       return f;
     });
 
