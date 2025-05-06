@@ -118,10 +118,11 @@ function updatePolygons() {
                 ['linear'],
                 ['get', 'rep_percentage'],  // This is your float, 0 to 1
                 0,    '#0077FF',   // 0% Republican
-                0.5,  '#CCCCCC',   // 50% Neutral
+                0.5,  '#800080',   // 50% Neutral (purple)
                 1.0,  '#FF0000'    // 100% Republican
               ],
-        'fill-opacity': 0.8
+        'fill-opacity': 0.8,
+        'fill-outline-color': '#000000'  // Small black border
       }
     });
   }
