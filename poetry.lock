@@ -3462,6 +3462,46 @@ docs = ["matplotlib", "numpydoc (==1.1.*)", "sphinx", "sphinx-book-theme", "sphi
 test = ["pytest", "pytest-cov", "scipy-doctest"]
 
 [[package]]
+name = "simplification"
+version = "0.7.13"
+description = "Fast linestring simplification using RDP or Visvalingam-Whyatt and a Rust binary"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "simplification-0.7.13-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:bde7771fcfbc30a3fd9fc731b04924521e9ecdab65631c3b398e659a9a7aa8d0"},
+    {file = "simplification-0.7.13-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:d2b540af7ef90a721c1966abd35a661a0ba9cb57221289ed502ae9580f863690"},
+    {file = "simplification-0.7.13-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d102769132ab409140816671e53972a35f5d870f7233da991db1c3023b081450"},
+    {file = "simplification-0.7.13-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:81d39241b85e63db951061c6b272de4efd0b4b74e1aa4ccdb530c201d262cb97"},
+    {file = "simplification-0.7.13-cp310-cp310-win_amd64.whl", hash = "sha256:d0e71474728ebe3da7cc68d5048e9a1ef9903afbafe2b9c7664e76e99019a555"},
+    {file = "simplification-0.7.13-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:9d0b4f6e678bbd693268155b3b24d1d26a81b3fcff57eacbaa0fcbea7328e33b"},
+    {file = "simplification-0.7.13-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:338723ab18d2150af74369e74e9b09024acd9700c405f7d72bb0f53b1e36da50"},
+    {file = "simplification-0.7.13-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0f5888544c489a9ed897d62f28e5465a60c3eba9e9ff07e13b78c1da92c5d7d0"},
+    {file = "simplification-0.7.13-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e6f2130789e4726f7ce73a3043bed9980ca504824c3ecb2001123543ea295085"},
+    {file = "simplification-0.7.13-cp311-cp311-win_amd64.whl", hash = "sha256:4d28b080ae0b3255906a1f8fc0bd14ce7d99c46ebbdea352f574cd3a010f8fb7"},
+    {file = "simplification-0.7.13-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:e3fb9b94003e28bbc84f71b0d7f1f56936ee9c3c536d7dbfd21ed6bc68810a8d"},
+    {file = "simplification-0.7.13-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:f7a2e32abe44f84e891b47523b142b9fd29fefadacc3850f94324315bb340a99"},
+    {file = "simplification-0.7.13-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:14b3a49957370b509d781583fad0fab169d6c60418393d0aab365c25c301c00e"},
+    {file = "simplification-0.7.13-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5127aa72369111f27783311d806ba62452065fb9a06f7445514dbe093c6885c1"},
+    {file = "simplification-0.7.13-cp312-cp312-win_amd64.whl", hash = "sha256:599a1e5d05d474d14f5859764bb98f9ee2d8ff156420b22eca6c8635159cba2c"},
+    {file = "simplification-0.7.13-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:eda0cb08a5f6cc90b48014833f1dd603c7435dc81e6316f61b288806c84c31bf"},
+    {file = "simplification-0.7.13-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:60364a6b9ef2c561dd6b057ce1455e30d772b588b3d07e98bcedec830a307858"},
+    {file = "simplification-0.7.13-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2c02278b3bcdccbf315c31be6332b62f8be2971910a862cc95771542eb8389bd"},
+    {file = "simplification-0.7.13-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b7a9bbab712e9efced43b2808f9fba9b296933faffbf9456e9f3bb081b143e08"},
+    {file = "simplification-0.7.13-cp313-cp313-win_amd64.whl", hash = "sha256:7092d57248779d86c935763a02084b60c9e3859b1259be75a83b8da662826c8f"},
+    {file = "simplification-0.7.13-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:9d85e61727166b295dd58cb65ccf74e3fc5f983412c58d3b1182a011ba6f857a"},
+    {file = "simplification-0.7.13-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0aa8c0852c04690c946d38992227b68109bab25d5de6fe8618141a56ca5a9c9b"},
+    {file = "simplification-0.7.13-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3fb7cfe26ea343c99efe874be0444c8d08572127d574f3f5dd055f3f78fac82a"},
+    {file = "simplification-0.7.13-cp39-cp39-win_amd64.whl", hash = "sha256:afc74d7863ffee44ceb7bc8e9bce2ad3a4778e10e4a3874ae05f35b39af08566"},
+    {file = "simplification-0.7.13.tar.gz", hash = "sha256:4ff7a7ef43eb2359a822b981c22c2cd8d58d92d84aa13c715662ec1887d5854e"},
+]
+
+[package.dependencies]
+numpy = ">=2.0.0"
+
+[package.extras]
+test = ["pytest (>=7.4.2)"]
+
+[[package]]
 name = "six"
 version = "1.17.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -3514,6 +3554,20 @@ pure-eval = "*"
 tests = ["cython", "littleutils", "pygments", "pytest", "typeguard"]
 
 [[package]]
+name = "tabulate"
+version = "0.9.0"
+description = "Pretty-print tabular data"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "tabulate-0.9.0-py3-none-any.whl", hash = "sha256:024ca478df22e9340661486f85298cff5f6dcdba14f3813e8830015b9ed1948f"},
+    {file = "tabulate-0.9.0.tar.gz", hash = "sha256:0095b12bf5966de529c0feb1fa08671671b3368eec77d7ef7ab114be2c068b3c"},
+]
+
+[package.extras]
+widechars = ["wcwidth"]
+
+[[package]]
 name = "threadpoolctl"
 version = "3.6.0"
 description = "threadpoolctl"
@@ -3523,6 +3577,25 @@ files = [
     {file = "threadpoolctl-3.6.0-py3-none-any.whl", hash = "sha256:43a0b8fd5a2928500110039e43a5eed8480b918967083ea48dc3ab9f13c4a7fb"},
     {file = "threadpoolctl-3.6.0.tar.gz", hash = "sha256:8ab8b4aa3491d812b623328249fab5302a68d2d71745c8a4c719a2fcaba9f44e"},
 ]
+
+[[package]]
+name = "topojson"
+version = "1.9"
+description = "topojson - a powerful library to encode geographic data as topology in Python!🌍"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "topojson-1.9-py3-none-any.whl", hash = "sha256:122e6e91fb422549644504580eee86f8a37703dc5ccb1a8e6d8928b750706fe7"},
+    {file = "topojson-1.9.tar.gz", hash = "sha256:5a8389ff576d5540660d4430dab56fcadef7c1f90b9f1aa486b1cb140033ff3b"},
+]
+
+[package.dependencies]
+numpy = "*"
+packaging = "*"
+shapely = "*"
+
+[package.extras]
+dev = ["altair", "geojson", "geopandas", "ipywidgets", "pyshp", "simplification"]
 
 [[package]]
 name = "tornado"
@@ -3777,4 +3850,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "140932b590738992f35d4cae289bdb8412cc08087e0858fe8c2458cb275be58a"
+content-hash = "e60b8b88a956b7110e363f812543f3255465fff9044632cfd567739a3624e1d1"
