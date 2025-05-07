@@ -26,7 +26,7 @@
   <label for="courtType">Court Type:</label>
   <select id="courtType">
     <option value="U.S. District Court">Districts</option>
-    <option value="circuit">Circuits</option>
+    <option value="U.S. Court of Appeals">Circuits</option>
   </select>
   <br><br>
   <label for="dateSlider">Date: <span id="dateLabel">1912-01-01</span></label><br>
@@ -135,9 +135,10 @@ document.getElementById('dateSlider').addEventListener('input', updatePolygons);
 
 map.on('click', 'courts-layer', (e) => {
     const props = e.features[0].properties;
+    let rep_perc = (props.rep_percentage * 100).toFixed(1) + '%';
     new maplibregl.Popup()
         .setLngLat(e.lngLat)
-        .setHTML(`Court ID: ${props.court_id}<br>Total judges: ${props.judge_count}<br>DEM judges: ${props.dem_count}<br>REP judges: ${props.rep_count}`)
+        .setHTML(`Court ID: ${props.court_id}<br>Total judges: ${props.judge_count}<br>DEM judges: ${props.dem_count}<br>REP judges: ${props.rep_count}<br>REP %: ${rep_perc}`)
         .addTo(map);
 });
 
