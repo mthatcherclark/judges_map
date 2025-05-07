@@ -96,7 +96,9 @@ function updatePolygons() {
       const cid = f.properties.court_id;
       const count = getJudgeCountOnDate(judgeCounts[cid] || {}, dateStr);
       f.properties.judge_count = (count && count[0]) || 0;
-      f.properties.rep_percentage = (count && count[1]) || 0;
+      f.properties.dem_count = (count && count[1]) || 0;
+      f.properties.rep_count = (count && count[2]) || 0;
+      f.properties.rep_percentage = (count && count[3]) || 0;
       return f;
     });
 
@@ -135,7 +137,7 @@ map.on('click', 'courts-layer', (e) => {
     const props = e.features[0].properties;
     new maplibregl.Popup()
         .setLngLat(e.lngLat)
-        .setHTML(`<strong>Court ID:</strong> ${props.court_id} - ${props.rep_percentage} judges`)
+        .setHTML(`Court ID: ${props.court_id}<br>Total judges: ${props.judge_count}<br>DEM judges: ${props.dem_count}<br>REP judges: ${props.rep_count}`)
         .addTo(map);
 });
 
