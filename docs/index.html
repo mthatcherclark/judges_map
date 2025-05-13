@@ -30,7 +30,7 @@
   </select>
   <br><br>
   <label for="dateSlider">Date: <span id="dateLabel">1912-01-01</span></label><br>
-  <input type="range" id="dateSlider" min="0" max="41399" value="0" step="1" />
+  <input type="range" id="dateSlider" min="0" max="0" value="0" step="1" />
 </div>
 
 <div id="map"></div>
@@ -45,8 +45,11 @@ let map = new maplibregl.Map({
 let polygonsData = null;
 let judgeCounts = null;
 
+// Initial date slider values
 const minDate = new Date("1912-01-01");
-const maxDate = new Date("2025-05-06");
+const maxDate = new Date();
+const msPerDay = 24 * 60 * 60 * 1000;
+const totalDays = Math.floor((maxDate - minDate) / msPerDay);
 
 function daysBetween(start, end) {
   return Math.floor((end - start) / (1000 * 60 * 60 * 24));
@@ -65,13 +68,21 @@ async function loadData() {
   ]);
   polygonsData = geo;
   judgeCounts = judges;
+  const dateSlider = document.getElementById('dateSlider');
+  const dateLabel = document.getElementById('dateLabel');
+  // Initialize slider
+  dateSlider.min = 0;
+  dateSlider.max = totalDays;
+  dateSlider.value = totalDays;
+  dateLabel.textContent = dateFromSlider(parseInt(dateSlider.value));
   updatePolygons();
 }
 
 function getJudgeCountOnDate(judgeData, dateStr) {
   const dates = Object.keys(judgeData).sort();
+  const targetDate = new Date(dateStr);
   for (let i = dates.length - 1; i >= 0; i--) {
-    if (new Date(dates[i]) <= new Date(dateStr)) {
+    if (new Date(dates[i]) <= targetDate) {
       return judgeData[dates[i]];
     }
   }
@@ -90,6 +101,9 @@ function updatePolygons() {
       const d = new Date(dateStr);
       const start = new Date(f.properties.start_date);
       const end = new Date(f.properties.end_date);
+      console.log(dateStr);  
+      console.log(f.properties.start_date);
+      console.log(d >= start && d <= end);      
       return d >= start && d <= end;
     })
     .map(f => {
