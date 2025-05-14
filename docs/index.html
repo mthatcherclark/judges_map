@@ -176,6 +176,7 @@
     border: 1px solid #ccc;
     transition: 0.4s;
     border-radius: 21px;
+    display: inline-flex;
     top: 0;
     left: 0;
     right: 0;
@@ -207,47 +208,59 @@
     position: absolute;
     top: 10px;
     right: 10px;
+    width: 275px;
     background: white;
-    padding: 8px 12px; /* Tighter padding */
+    padding: 8px 12px;
     font-family: "proxima-nova", sans-serif;
     font-size: 12px;
     z-index: 1000;
-    border-radius: 8px; /* Rounded edges for the box */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for better visibility */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    align-items: center; /* Align text and icon vertically */
+  }
+
+  #dateLabel {
+    min-width: 90px; /* enough space for widest expected date */
+    display: inline-block;
+    font-weight: bold;
+    text-align: left;
+    cursor: pointer; /* Make it look clickable */
+  }
+
+  #calendar-icon {
+    cursor: pointer; /* Make it look clickable */
   }
 
   #dateInput {
-    font-size: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 2px 4px;
-    text-align: center;
-    margin-bottom: 5px; /* Add spacing between the date input and slider */
-    width: 120px; /* Compact width */
-    display: none; /* Hide the native date input */
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    padding: 0;
+    margin: -1px;
+    border: 0;
   }
 
   #dateSlider {
-    width: 200px; /* Wider slider */
-    height: 6px; /* Slimmer slider */
-    border-radius: 5px; /* Rounded edges for the slider */
-    background: #ddd; /* Light gray background */
+    width: 200px;
+    height: 6px;
+    border-radius: 5px;
+    background: #ddd;
     outline: none;
-    -webkit-appearance: none; /* Remove default styling */
+    -webkit-appearance: none;
   }
 
   #dateSlider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 14px; /* Thumb size */
+    width: 14px;
     height: 14px;
-    border-radius: 50%; /* Rounded thumb */
-    background: #007BFF; /* Blue thumb */
+    border-radius: 50%;
+    background: #007BFF;
     cursor: pointer;
-    border: 2px solid white; /* White border for contrast */
+    border: 2px solid white;
   }
 
   #dateSlider::-moz-range-thumb {
@@ -257,15 +270,6 @@
     background: #007BFF;
     cursor: pointer;
     border: 2px solid white;
-  }
-
-  #dateLabel {
-    font-size: 14px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 5px;
-    display: block;
-    cursor: pointer; /* Make it look clickable */
   }
 
   button.maplibregl-ctrl-compass {
@@ -381,10 +385,17 @@
 
     </div>
     
-  <div id="time-control">
-  <span id="dateLabel">Jan. 1, 1912</span>
-  <input type="date" id="dateInput" value="1912-01-01" style="display: none;" />
-  <input type="range" id="dateSlider" min="0" max="0" value="0" step="1" />
+<div id="time-control">
+    <span id="calendarIcon" class="calendar-icon" role="button" aria-label="Open date picker">
+      📅
+    </span>
+    <span id="dateLabel" role="button">
+    Jan. 1, 1912
+    </span>
+
+
+    <input type="date" id="dateInput" value="1912-01-01" />
+    <input type="range" id="dateSlider" min="0" max="0" value="0" step="1" />
 </div>
 
 
@@ -450,8 +461,6 @@ map.scrollZoom.disable();
 // Add zoom and rotation controls to the map.
 map.addControl(new maplibregl.NavigationControl(), "top-left");
 
-
-
 // Initial date slider values
 const minDate = new Date("1912-01-01");
 const maxDate = new Date();
@@ -499,11 +508,12 @@ async function loadData() {
   // Initialize slider and date input
   const dateInput = document.getElementById('dateInput');
   const dateSlider = document.getElementById('dateSlider');
+  const dateLabel = document.getElementById('dateLabel');
 
   dateSlider.min = 0;
   dateSlider.max = totalDays;
   dateSlider.value = totalDays;
-  //dateInput.value = formatAPStyleFromISO(dateFromSlider(parseInt(dateSlider.value)));
+  dateLabel.textContent = formatAPStyleFromISO(dateFromSlider(dateSlider.value));
   dateInput.value = dateFromSlider(parseInt(dateSlider.value));
   
   updatePolygons();
@@ -622,7 +632,14 @@ dateInput.addEventListener('change', () => {
 
 // Allow clicking the label to open the date picker
 dateLabel.addEventListener('click', () => {
-  dateInput.click(); // Trigger the hidden date input
+  dateInput.showPicker();
+});
+
+const calendarIcon = document.getElementById('calendarIcon');
+
+// Allow clicking the calendar icon to open the date picker
+calendarIcon.addEventListener('click', () => {
+  dateInput.showPicker();
 });
 
 map.on('click', 'courts-layer', (e) => {
@@ -646,4 +663,3 @@ map.on('load', loadData);
 
 </body>
 </html>
-``` 
