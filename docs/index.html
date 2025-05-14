@@ -452,6 +452,39 @@ function formatAPStyleFromISO(isoDateStr) {
   return `${months[month - 1]} ${day}, ${year}`;
 }
 
+// get the ramp colors from CSS variables
+const rampColors = [];
+for (let i = 0; i < 9; i++) {
+  const color = getComputedStyle(document.documentElement)
+              .getPropertyValue(`--ramp-color-${i}`).trim();
+  rampColors.push(color);
+}
+
+// Example color mapping function
+function getColorFromFeature(feature) {
+  const repPct = parseFloat(feature.properties.rep_percentage);
+
+  if (isNaN(repPct) || repPct < 0) return rampColors[0]; // Grey fallback
+
+  // Hardcoded ramp from whatever to whatever color
+  // You can change the values at top of CSS
+  const ramp = [
+    { value: 0, color:     rampColors[1]},
+    { value: 16.67, color: rampColors[2]},
+    { value: 33.34, color: rampColors[3]},
+    { value: 50.01, color: rampColors[4]},
+    { value: 66.68, color: rampColors[5]},
+    { value: 83.35, color: rampColors[6]},
+    { value: 100, color:   rampColors[7]}
+  ];
+
+  // Find appropriate color
+  for (let i = ramp.length - 1; i >= 0; i--) {
+    if (repPct >= ramp[i].value) return ramp[i].color;
+  }
+  return rampColors[0]; // Fallback again
+}
+
 // Set up the map
 let map = new maplibregl.Map({
   container: 'map',
@@ -550,6 +583,25 @@ function getJudgeCountOnDate(judgeData, dateStr) {
   return null;
 }
 
+function updateInset(map) {
+  const features = map.querySourceFeatures('courts'); // Replace with actual source ID
+
+  // Filter for features flagged to appear in the inset
+  const insetFeatures = features.filter(f => f.properties.in_box === true);
+
+  // Loop through each inset feature
+  insetFeatures.forEach(feature => {
+    const id = feature.properties.court_id; // e.g., "AK" -> "ak"
+    const color = getColorFromFeature(feature); // Your function to determine color based on feature properties
+
+    const square = document.getElementById(`${id}-square`);
+    if (square) {
+      square.style.backgroundColor = color;
+      square.title = feature.properties.court_name || id.toUpperCase(); // Optional: add a tooltip
+    }
+  });
+}
+
 function updatePolygons() {
   const courtType = circuitsToggle.classList.contains("active")
      ? "U.S. Court of Appeals"
@@ -587,13 +639,6 @@ function updatePolygons() {
       type: 'geojson',
       data: { type: "FeatureCollection", features: filtered }
     });
-
-    const rampColors = [];
-    for (let i = 0; i < 9; i++) {
-      const color = getComputedStyle(document.documentElement)
-                  .getPropertyValue(`--ramp-color-${i}`).trim();
-      rampColors.push(color);
-    }
 
     map.addLayer({
       id: 'courts-layer',
