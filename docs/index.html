@@ -9,6 +9,17 @@
 <!-- Fonts -->
 <link rel="stylesheet" href="https://use.typekit.net/rdn8fde.css" />
 <style>
+  :root {
+    --ramp-color-0: #AAAAAA;  /* Gray for < 0 or no data */
+    --ramp-color-1:  #FF1010;
+    --ramp-color-2:  #D81128;
+    --ramp-color-3:  #B21341;
+    --ramp-color-4:  #8C145A;
+    --ramp-color-5:  #651672;
+    --ramp-color-6:  #3F178B;
+    --ramp-color-7:  #1919A4;
+  }
+
   @font-face {
     font-family: "Publico Headline";
     src: url("fonts/PublicoHeadline-Black.woff2") format("woff2"),
@@ -78,30 +89,7 @@
     margin-right: 5px;
     font-family: "proxima-nova", sans-serif;
   }
-  .good {
-    background-color: #70bb6e;
-  }
-
-  .moderate {
-    background-color: #fde633;
-  }
-  .unhealthy-sg {
-    background-color: #fd8724;
-  }
-  .unhealthy {
-    background-color: #a5091e;
-  }
-  .very-unhealthy {
-    background-color: #8b09a5;
-  }
-  .hazardous {
-    background-color: #876035;
-  }
-  .none {
-    background-color: #cccccc;
-    margin-left: 15px;
-  }
-
+  
   #map {
     flex-grow: 1;
     max-height: 600px;
@@ -374,16 +362,17 @@
       process.
     </p>
     <div class="legend">
-      <span>Good</span>
-      <div class="good"></div>
-      <div class="moderate"></div>
-      <div class="unhealthy-sg"></div>
-      <div class="unhealthy"></div>
-      <div class="very-unhealthy"></div>
-      <div class="hazardous"></div>
-      <span>Hazardous</span>
-      <div class="none"></div>
-      <span>No data</span>
+      <span>GOP</span>
+      <div style="background-color: var(--ramp-color-1);"></div>
+      <div style="background-color: var(--ramp-color-2);"></div>
+      <div style="background-color: var(--ramp-color-3);"></div>
+      <div style="background-color: var(--ramp-color-4);"></div>
+      <div style="background-color: var(--ramp-color-5);"></div>
+      <div style="background-color: var(--ramp-color-6);"></div>
+      <div style="background-color: var(--ramp-color-7);"></div>
+      <span>DEM</span>
+      <div style="background-color: var(--ramp-color-0);"></div>
+      <span>No assigned judges</span>
     </div>
   </div>
 
@@ -598,18 +587,31 @@ function updatePolygons() {
       type: 'geojson',
       data: { type: "FeatureCollection", features: filtered }
     });
+
+    const rampColors = [];
+    for (let i = 0; i < 9; i++) {
+      const color = getComputedStyle(document.documentElement)
+                  .getPropertyValue(`--ramp-color-${i}`).trim();
+      rampColors.push(color);
+    }
+
     map.addLayer({
       id: 'courts-layer',
       type: 'fill',
       source: 'courts',
       paint: {
               'fill-color': [
-                'interpolate',
-                ['linear'],
-                ['get', 'rep_percentage'],  // This is your float, 0 to 1
-                0,    '#0077FF',   // 0% Republican
-                0.5,  '#800080',   // 50% Neutral (purple)
-                1.0,  '#FF0000'    // 100% Republican
+                'case',
+                ['<', ['get', 'rep_percentage'], 0],      rampColors[0], // Gray for missing or invalid data
+                ['<=', ['get', 'rep_percentage'], 0],     rampColors[1],
+                ['<=', ['get', 'rep_percentage'], .1667], rampColors[2],
+                ['<=', ['get', 'rep_percentage'], .3334], rampColors[3],
+                ['<=', ['get', 'rep_percentage'], .5001], rampColors[4],
+                ['<=', ['get', 'rep_percentage'], .6668], rampColors[5],
+                ['<=', ['get', 'rep_percentage'], .8335], rampColors[6],
+                ['<=', ['get', 'rep_percentage'], 1],     rampColors[7],
+
+                rampColors[0] // Fallback gray if none match
               ],
         'fill-opacity': 0.8,
         'fill-outline-color': '#000000'  // Small black border
