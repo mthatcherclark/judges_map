@@ -459,12 +459,12 @@ function getColorFromFeature(feature) {
   // You can change the values at top of CSS
   const ramp = [
     { value: 0, color:     rampColors[1]},
-    { value: 16.67, color: rampColors[2]},
-    { value: 33.34, color: rampColors[3]},
-    { value: 50.01, color: rampColors[4]},
-    { value: 66.68, color: rampColors[5]},
-    { value: 83.35, color: rampColors[6]},
-    { value: 100, color:   rampColors[7]}
+    { value: .1667, color: rampColors[2]},
+    { value: .3334, color: rampColors[3]},
+    { value: .5001, color: rampColors[4]},
+    { value: .6668, color: rampColors[5]},
+    { value: .8335, color: rampColors[6]},
+    { value: 1, color:   rampColors[7]}
   ];
 
   // Find appropriate color
@@ -636,10 +636,14 @@ function updatePolygons() {
   }
 }
 
-function updateInset(map) {
-  const features = map.querySourceFeatures('courts');
+function updateInset() {
+  console.log("Starting inset update");
+  const features = polygonsData.features;
   const insetFeatures = features.filter(f => f.properties.in_box === true);
   const insetContainer = document.getElementById('inset');
+  console.log("Is element in DOM?", document.body.contains(insetContainer)); // should be true
+  console.log(insetFeatures.length)
+  console.log(insetContainer.childElementCount);
 
   // Build a Set of valid court IDs from source
   const validIds = new Set();
@@ -668,6 +672,7 @@ function updateInset(map) {
       row.appendChild(label);
       row.appendChild(square);
       insetContainer.appendChild(row);
+      console.log(insetContainer.childElementCount);
     }
     // Update color and tooltip
     const color = getColorFromFeature(feature);
@@ -676,13 +681,15 @@ function updateInset(map) {
   });
 
   // Remove any inset-rows that aren't in the updated feature list
-  const existingRows = insetContainer.querySelectorAll('.inset-row');
-  existingRows.forEach(row => {
-    const rowId = row.dataset.courtId;
-    if (!validIds.has(rowId)) {
-      row.remove();
-    }
-  });
+  // const existingRows = insetContainer.querySelectorAll('.inset-row');
+  // existingRows.forEach(row => {
+  //   const rowId = row.dataset.courtId;
+  //   if (!validIds.has(rowId)) {
+  //     row.remove();
+  //   }
+  // });
+  console.log(insetContainer);
+  console.log(insetContainer.childElementCount);
 }
 
 
