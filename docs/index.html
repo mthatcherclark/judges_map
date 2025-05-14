@@ -276,6 +276,40 @@
     display: none !important;
   }
 
+  /* Inset container */
+  #inset {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-family: "proxima-nova", sans-serif;
+    font-size: 12px;
+    z-index: 1000;
+  }
+
+  /* Inset rows */
+  .inset-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+
+  /* Inset labels */
+  .inset-label {
+    font-weight: bold;
+    margin-right: 5px;
+  }
+
+  /* Inset squares */
+  .inset-square {
+    width: 15px;
+    height: 15px;
+    border-radius: 2px;
+    border: 1px solid #000;
+  }
 
   /* MEDIA QUERY */
   @media (max-width: 430px) {
@@ -356,50 +390,48 @@
   <div id="map">
 
     <div id="controls">
-      <!-- Toggle for Districts vs. Circuits -->
       <div class="control-group">
         <div class="toggle-group">
           <button id="districtsToggle" class="toggle-btn active">Districts</button>
           <button id="circuitsToggle" class="toggle-btn">Circuits</button>
         </div>
       </div>
-
-      <!-- Senior judges toggle -->
       <div class="control-group">
         <div class="toggle-group">
           <button id="seniorsToggle" class="toggle-btn">Senior<br>
             Judges</button>
         </div>
       </div>
-
-      <!-- Label and Switch for Senior Judges -->
-      <!-- <div class="control-group">
-        <div class="senior-label">Senior</div>
-        <div class="senior-label">Judges:</div>
-        <label class="switch">
-          <input type="checkbox" id="seniorsToggle">
-          <span class="slider"></span>
-        </label>
-      </div> -->
-
-
     </div>
     
-<div id="time-control">
-    <span id="calendarIcon" class="calendar-icon" role="button" aria-label="Open date picker">
-      📅
-    </span>
-    <span id="dateLabel" role="button">
-    Jan. 1, 1912
-    </span>
+    <div id="time-control">
+        <span id="calendarIcon" class="calendar-icon" role="button" aria-label="Open date picker">
+          📅
+        </span>
+        <span id="dateLabel" role="button">
+        Jan. 1, 1912
+        </span>
+        <input type="date" id="dateInput" value="1912-01-01" />
+        <input type="range" id="dateSlider" min="0" max="0" value="0" step="1" />
+    </div>
 
-
-    <input type="date" id="dateInput" value="1912-01-01" />
-    <input type="range" id="dateSlider" min="0" max="0" value="0" step="1" />
-</div>
-
+    <div id="inset">
+      <div class="inset-row">
+        <span class="inset-label">AK</span>
+        <div class="inset-square" id="ak-square"></div>
+      </div>
+      <div class="inset-row">
+        <span class="inset-label">HI</span>
+        <div class="inset-square" id="hi-square"></div>
+      </div>
+      <div class="inset-row">
+        <span class="inset-label">PR</span>
+        <div class="inset-square" id="pr-square"></div>
+      </div>
+    </div>
 
   </div>
+
   <div class="note"></div>
   <div class="source">
     Sources:
@@ -425,16 +457,13 @@ function formatAPStyleFromISO(isoDateStr) {
     "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."
   ];
 
-  const date = new Date(isoDateStr);
-  if (isNaN(date)) return "Invalid date";
+  const [year, month, day] = isoDateStr.split('-').map(Number);
+  if (!year || !month || !day) return "Invalid date";
 
-  const day = date.getDate();
-  const month = months[date.getMonth()];
-  const year = date.getFullYear();
-
-  return `${month} ${day}, ${year}`;
+  return `${months[month - 1]} ${day}, ${year}`;
 }
 
+// Set up the map
 let map = new maplibregl.Map({
   container: 'map',
   // style: "https://vapi.mc-cdn.io/styles/CTS%20Flat%20Map.json?access_token=u3Q9ykMVHQIvvHegtpo2qgbyUxXbtw2N9e8983fde25feff58982455e437cb67145892361", //CBS Flat
@@ -452,16 +481,13 @@ map.addControl(new maplibregl.AttributionControl({
   compact: isSmallScreen
 }));
 
-let polygonsData = null;
-let judgeCounts = null;
-
 // Disable scroll zoom
 map.scrollZoom.disable();
 
 // Add zoom and rotation controls to the map.
 map.addControl(new maplibregl.NavigationControl(), "top-left");
 
-// Initial date slider values
+// Initial date slider values and functions
 const minDate = new Date("1912-01-01");
 const maxDate = new Date();
 const msPerDay = 24 * 60 * 60 * 1000;
@@ -477,6 +503,11 @@ function dateFromSlider(value) {
   return d.toISOString().split("T")[0];
 }
 
+// initial polygon and judge count variables
+let polygonsData = null;
+let judgeCounts = null;
+
+// Load the data and initialize it
 async function loadData() {
   // Fit the continguous in screen regardless of size
   // with a fun animation!
@@ -493,7 +524,7 @@ async function loadData() {
         right: 10    // Less space on the right
       },
       animate: true,
-      duration: 1000 // Optional: smooth transition
+      duration: 1000 // Smooth transition
     }
   );
 
@@ -514,7 +545,7 @@ async function loadData() {
   dateSlider.max = totalDays;
   dateSlider.value = totalDays;
   dateLabel.textContent = formatAPStyleFromISO(dateFromSlider(dateSlider.value));
-  dateInput.value = dateFromSlider(parseInt(dateSlider.value));
+  dateInput.value = dateFromSlider(dateSlider.value);
   
   updatePolygons();
 }
@@ -535,12 +566,11 @@ function updatePolygons() {
      ? "U.S. Court of Appeals"
      : "U.S. District Court";
   const incSeniors = seniors_button.classList.contains("active")
-    ? true
-    : false;
+    ? 4 // judges.json list index for seniors is four later than active judges
+    : 0;
 
   const sliderValue = document.getElementById('dateSlider').value;
   const dateStr = dateFromSlider(sliderValue);
-  //document.getElementById('dateInput').value = formatAPStyleFromISO(dateStr);
 
   const filtered = polygonsData.features
     .filter(f => f.properties.court_type === courtType)
@@ -553,10 +583,10 @@ function updatePolygons() {
     .map(f => {
       const cid = f.properties.court_id;
       const count = getJudgeCountOnDate(judgeCounts[cid] || {}, dateStr);
-      f.properties.judge_count = (count && count[0]) || 0;
-      f.properties.dem_count = (count && count[1]) || 0;
-      f.properties.rep_count = (count && count[2]) || 0;
-      f.properties.rep_percentage = (count && count[3]) || 0;
+      f.properties.judge_count = (count && count[0+incSeniors]) || 0; // Add senior increment
+      f.properties.dem_count = (count && count[1+incSeniors]) || 0; // to get seniors if needed
+      f.properties.rep_count = (count && count[2+incSeniors]) || 0;
+      f.properties.rep_percentage = (count && count[3+incSeniors]) || 0;
       return f;
     });
 
@@ -635,9 +665,8 @@ dateLabel.addEventListener('click', () => {
   dateInput.showPicker();
 });
 
-const calendarIcon = document.getElementById('calendarIcon');
-
 // Allow clicking the calendar icon to open the date picker
+const calendarIcon = document.getElementById('calendarIcon');
 calendarIcon.addEventListener('click', () => {
   dateInput.showPicker();
 });
