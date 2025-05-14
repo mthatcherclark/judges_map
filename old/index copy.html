@@ -111,162 +111,27 @@
 
   #controls {
     position: absolute;
-    bottom: 10px;
+    bottom: 10px; 
     left: 10px;
-    background: white;
-    padding: 5px;
+    background: white; 
+    padding: 1px;
     font-family: "proxima-nova", sans-serif;
-    font-size: 12px;
-    border-radius: 8px;
-    z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-
-  .control-group {
-    margin-bottom: 2px;
-  }
-
-  .toggle-group {
-    display: flex;
-    flex-direction: column; /* Stack buttons vertically */
-    font-size: 12px;
-  }
-
-  .toggle-btn {
-    padding: 2px 3px;
-    background-color: #eee;
-    border: 1px solid #aaa;
-    border-radius: 4px;
-    cursor: pointer;
-    /* margin-bottom: 1px; Add spacing between buttons */
-    font-weight: bold;
-    text-align: center;
-    font-size: 12px;
-  }
-
-  .toggle-btn.active {
-    background-color: #007BFF;
-    color: white;
-    border-color: #007BFF;
-  }
-
-  .senior-label {
-    font-weight: bold;
-    text-align: left;
-  }
-
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 40px;
-    height: 21px;
-    margin: 0 auto; /* Center the switch */
-  }
-
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    background-color: white;
-    border: 1px solid #ccc;
-    transition: 0.4s;
-    border-radius: 21px;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-
-  .slider:before {
-    content: "";
-    position: absolute;
-    height: 16px;
-    width: 16px;
-    left: 1px;
-    bottom: 1px;
-    background-color: gray;
-    transition: 0.4s;
-    border-radius: 50%;
-  }
-
-  input:checked + .slider {
-    background-color: #2196F3; /* Blue when on */
-  }
-
-  input:checked + .slider:before {
-    transform: translateX(18px);
-    background-color: white;
-  }
-
-  #time-control {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: white;
-    padding: 8px 12px; /* Tighter padding */
-    font-family: "proxima-nova", sans-serif;
-    font-size: 12px;
-    z-index: 1000;
-    border-radius: 8px; /* Rounded edges for the box */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for better visibility */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  #dateInput {
-    font-size: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 2px 4px;
-    text-align: center;
-    margin-bottom: 5px; /* Add spacing between the date input and slider */
-    width: 120px; /* Compact width */
-    display: none; /* Hide the native date input */
-  }
-
-  #dateSlider {
-    width: 200px; /* Wider slider */
-    height: 6px; /* Slimmer slider */
-    border-radius: 5px; /* Rounded edges for the slider */
-    background: #ddd; /* Light gray background */
-    outline: none;
-    -webkit-appearance: none; /* Remove default styling */
-  }
-
-  #dateSlider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 14px; /* Thumb size */
-    height: 14px;
-    border-radius: 50%; /* Rounded thumb */
-    background: #007BFF; /* Blue thumb */
-    cursor: pointer;
-    border: 2px solid white; /* White border for contrast */
-  }
-
-  #dateSlider::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #007BFF;
-    cursor: pointer;
-    border: 2px solid white;
-  }
-
-  #dateLabel {
     font-size: 14px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 5px;
-    display: block;
-    cursor: pointer; /* Make it look clickable */
+    border-radius: 12px;
+    z-index: 1000;
   }
+
+#time-control {
+    position: absolute;
+    top: 10px; 
+    right: 10px;
+    background: white; 
+    padding: 10px;
+    font-family: "proxima-nova", sans-serif;
+    font-size: 14px;
+    z-index: 1000;
+  }
+
 
   button.maplibregl-ctrl-compass {
     display: none !important;
@@ -322,6 +187,67 @@
     color: rgb(130, 130, 130);
     text-decoration: underline;
   }
+  #dateLabel {
+    font-weight: bold;
+  }
+  .toggle-btn {
+    padding: 8px 16px;
+    background-color: #eee;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .toggle-btn.active {
+    background-color: #007BFF;
+    color: white;
+    border-color: #007BFF;
+  }
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 21px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background-color: white;
+  border: 1px solid #ccc;
+  transition: 0.4s;
+  border-radius: 21px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 1px;
+  bottom: 1px;
+  background-color: gray;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196F3; /* blue when on */
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+  background-color: white;
+}
 </style>
 </head>
 <body>
@@ -330,8 +256,8 @@
   <div id="header">
     <div class="title">Nominating political party of federal judges</div>
     <p class="description">
-      This map shows which political party's president nominated the share of judges in each federal court, going back to 1912. Legal experts interviewed by CBS News said plaintiffs seeking nationwide reforms 
-      may have considered this information when deciding where to file their cases. The map can display either court districts or circuits and it can include senior judges who may not actively be hearing cases. Click 
+      This map shows which political party's president nominated the judges in each federal court circuit or district court. Legal experts interviewed by CBS News said plaintiffs seeking nationwide reforms 
+      often consider this information when deciding where to file their cases. Click 
       <a href="https://www.uscourts.gov/about-federal-courts/educational-resources/supreme-court-landmarks/nomination-process" target="_blank">here</a> to learn more about the judicial nomination 
       process.
     </p>
@@ -352,40 +278,30 @@
   <div id="map">
 
     <div id="controls">
-      <!-- Toggle for Districts vs. Circuits -->
-      <div class="control-group">
-        <div class="toggle-group">
-          <button id="districtsToggle" class="toggle-btn active">Districts</button>
-          <button id="circuitsToggle" class="toggle-btn">Circuits</button>
-        </div>
-      </div>
+      <label for="courtType">Circuits: </label>
+      <label class="switch"> 
+        <input type="checkbox" id="courtType">
+        <span class="slider"></span>
+      </label>
+      <br>
+      <label for="seniorsToggle">Senior judges: </label>
+      <label class="switch"> 
+        <input type="checkbox" id="seniorsToggle">
+        <span class="slider"></span>
+      </label>
 
-      <!-- Senior judges toggle -->
-      <div class="control-group">
-        <div class="toggle-group">
-          <button id="seniorsToggle" class="toggle-btn">Senior<br>
-            Judges</button>
-        </div>
-      </div>
-
-      <!-- Label and Switch for Senior Judges -->
-      <!-- <div class="control-group">
-        <div class="senior-label">Senior</div>
-        <div class="senior-label">Judges:</div>
-        <label class="switch">
-          <input type="checkbox" id="seniorsToggle">
-          <span class="slider"></span>
-        </label>
-      </div> -->
-
-
+      <!-- <button id="typeToggle" class="toggle-btn">Circuits</button>
+      <br> -->
+      <!-- <button id="seniorsToggle" class="toggle-btn">Senior Judges</button> -->
+      <!-- <br>
+      <label for="dateSlider">Date: <span id="dateLabel">1912-01-01</span></label><br>
+      <input type="range" id="dateSlider" min="0" max="0" value="0" step="1" /> -->
     </div>
     
-  <div id="time-control">
-  <span id="dateLabel">Jan. 1, 1912</span>
-  <input type="date" id="dateInput" value="1912-01-01" style="display: none;" />
-  <input type="range" id="dateSlider" min="0" max="0" value="0" step="1" />
-</div>
+    <div id="time-control">
+      <label for="dateSlider"><span id="dateLabel">Jan. 1, 1912</span></label><br>
+      <input type="range" id="dateSlider" min="0" max="0" value="0" step="1" />
+    </div>
 
 
   </div>
@@ -433,13 +349,7 @@ let map = new maplibregl.Map({
   zoom: 5,
   maxZoom: 7,
   minZoom: 2,
-  attributionControl: false  // disable default control
 });
-
-const isSmallScreen = window.innerWidth <= 480;  // typical small smartphone width
-map.addControl(new maplibregl.AttributionControl({
-  compact: isSmallScreen
-}));
 
 let polygonsData = null;
 let judgeCounts = null;
@@ -449,8 +359,6 @@ map.scrollZoom.disable();
 
 // Add zoom and rotation controls to the map.
 map.addControl(new maplibregl.NavigationControl(), "top-left");
-
-
 
 // Initial date slider values
 const minDate = new Date("1912-01-01");
@@ -477,12 +385,7 @@ async function loadData() {
       [-66.5, 49] // Northeast corner [lng, lat]
     ],
     {
-      padding: {
-        top: 35,
-        bottom: 10,
-        left: 10,   // More space on the left
-        right: 10    // Less space on the right
-      },
+      padding: 10, // Adjust for your UI needs
       animate: true,
       duration: 1000 // Optional: smooth transition
     }
@@ -496,15 +399,14 @@ async function loadData() {
   polygonsData = geo;
   judgeCounts = judges;
   
-  // Initialize slider and date input
-  const dateInput = document.getElementById('dateInput');
+  // Initialize slider
   const dateSlider = document.getElementById('dateSlider');
+  const dateLabel = document.getElementById('dateLabel');
 
   dateSlider.min = 0;
   dateSlider.max = totalDays;
   dateSlider.value = totalDays;
-  //dateInput.value = formatAPStyleFromISO(dateFromSlider(parseInt(dateSlider.value)));
-  dateInput.value = dateFromSlider(parseInt(dateSlider.value));
+  dateLabel.textContent = formatAPStyleFromISO(dateFromSlider(parseInt(dateSlider.value)));
   
   updatePolygons();
 }
@@ -521,16 +423,21 @@ function getJudgeCountOnDate(judgeData, dateStr) {
 }
 
 function updatePolygons() {
-  const courtType = circuitsToggle.classList.contains("active")
-     ? "U.S. Court of Appeals"
-     : "U.S. District Court";
-  const incSeniors = seniors_button.classList.contains("active")
-    ? true
-    : false;
+  const court_box = document.getElementById('courtType');
+  const courtType = court_box.checked ? "U.S. Court of Appeals" : "U.S. District Court";
+
+  const seniors_box = document.getElementById('seniorsToggle');
+  const incSeniors = seniors_box.checked ? true : false;
+  // const courtType = type_button.classList.contains("active")
+  //   ? "U.S. Court of Appeals"
+  //   : "U.S. District Court";
+  // const incSeniors = seniors_button.classList.contains("active")
+  //   ? true
+  //   : false;
 
   const sliderValue = document.getElementById('dateSlider').value;
   const dateStr = dateFromSlider(sliderValue);
-  //document.getElementById('dateInput').value = formatAPStyleFromISO(dateStr);
+  document.getElementById('dateLabel').textContent = formatAPStyleFromISO(dateStr);
 
   const filtered = polygonsData.features
     .filter(f => f.properties.court_type === courtType)
@@ -578,52 +485,21 @@ function updatePolygons() {
   }
 }
 
-const seniors_button = document.getElementById("seniorsToggle");
-  seniors_button.addEventListener("click", () => {
-    seniors_button.classList.toggle("active");
-    updatePolygons();
-});
+// const type_button = document.getElementById("typeToggle");
+//   type_button.addEventListener("click", () => {
+//     type_button.classList.toggle("active");
+//     updatePolygons();
+// });
 
-const districtsToggle = document.getElementById('districtsToggle');
-const circuitsToggle = document.getElementById('circuitsToggle');
+// const seniors_button = document.getElementById("seniorsToggle");
+//   seniors_button.addEventListener("click", () => {
+//     seniors_button.classList.toggle("active");
+//     updatePolygons();
+// });
 
-districtsToggle.addEventListener('click', () => {
-  districtsToggle.classList.add('active');
-  circuitsToggle.classList.remove('active');
-  updatePolygons(); // Update the map to show Districts
-});
-
-circuitsToggle.addEventListener('click', () => {
-  circuitsToggle.classList.add('active');
-  districtsToggle.classList.remove('active');
-  updatePolygons(); // Update the map to show Circuits
-});
-
-const dateInput = document.getElementById('dateInput');
-const dateSlider = document.getElementById('dateSlider');
-const dateLabel = document.getElementById('dateLabel');
-
-// Update the date label when the slider moves
-dateSlider.addEventListener('input', () => {
-  const dateStr = dateFromSlider(dateSlider.value);
-  dateLabel.textContent = formatAPStyleFromISO(dateStr); // Update the label
-  dateInput.value = dateStr; // Update the hidden input
-  updatePolygons(); // Update the map
-});
-
-// Update the slider and label when the date input changes
-dateInput.addEventListener('change', () => {
-  const selectedDate = new Date(dateInput.value);
-  const daysSinceStart = daysBetween(minDate, selectedDate);
-  dateSlider.value = daysSinceStart;
-  dateLabel.textContent = formatAPStyleFromISO(dateInput.value); // Update the label
-  updatePolygons(); // Update the map
-});
-
-// Allow clicking the label to open the date picker
-dateLabel.addEventListener('click', () => {
-  dateInput.click(); // Trigger the hidden date input
-});
+document.getElementById('courtType').addEventListener('change', updatePolygons);
+document.getElementById('seniorsToggle').addEventListener('change', updatePolygons);
+document.getElementById('dateSlider').addEventListener('input', updatePolygons);
 
 map.on('click', 'courts-layer', (e) => {
     const props = e.features[0].properties;
@@ -646,4 +522,3 @@ map.on('load', loadData);
 
 </body>
 </html>
-``` 
