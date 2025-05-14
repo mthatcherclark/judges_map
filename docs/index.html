@@ -405,18 +405,7 @@
     </div>
 
     <div id="inset">
-      <div class="inset-row">
-        <span class="inset-label">AK</span>
-        <div class="inset-square" id="ak-square"></div>
-      </div>
-      <div class="inset-row">
-        <span class="inset-label">HI</span>
-        <div class="inset-square" id="hi-square"></div>
-      </div>
-      <div class="inset-row">
-        <span class="inset-label">PR</span>
-        <div class="inset-square" id="pr-square"></div>
-      </div>
+
     </div>
 
   </div>
@@ -583,25 +572,6 @@ function getJudgeCountOnDate(judgeData, dateStr) {
   return null;
 }
 
-function updateInset(map) {
-  const features = map.querySourceFeatures('courts'); // Replace with actual source ID
-
-  // Filter for features flagged to appear in the inset
-  const insetFeatures = features.filter(f => f.properties.in_box === true);
-
-  // Loop through each inset feature
-  insetFeatures.forEach(feature => {
-    const id = feature.properties.court_id; // e.g., "AK" -> "ak"
-    const color = getColorFromFeature(feature); // Your function to determine color based on feature properties
-
-    const square = document.getElementById(`${id}-square`);
-    if (square) {
-      square.style.backgroundColor = color;
-      square.title = feature.properties.court_name || id.toUpperCase(); // Optional: add a tooltip
-    }
-  });
-}
-
 function updatePolygons() {
   const courtType = circuitsToggle.classList.contains("active")
      ? "U.S. Court of Appeals"
@@ -663,7 +633,58 @@ function updatePolygons() {
       }
     });
   }
+  updateInset(map);
 }
+
+function updateInset(map) {
+  const features = map.querySourceFeatures('courts');
+  const insetFeatures = features.filter(f => f.properties.in_box === true);
+  const insetContainer = document.getElementById('inset');
+
+  // Build a Set of valid court IDs from source
+  const validIds = new Set();
+  insetFeatures.forEach(feature => {
+    const id = feature.properties.court_id;
+    validIds.add(id);
+
+    const squareId = `${id}-square`;
+    let square = document.getElementById(squareId);
+
+    if (!square) {
+      console.log("Updating inset");
+      // Create the inset-row
+      const row = document.createElement('div');
+      row.className = 'inset-row';
+      row.dataset.courtId = id; // for easier lookup when removing
+
+      const label = document.createElement('span');
+      label.className = 'inset-label';
+      label.textContent = id;
+
+      square = document.createElement('div');
+      square.className = 'inset-square';
+      square.id = squareId;
+
+      row.appendChild(label);
+      row.appendChild(square);
+      insetContainer.appendChild(row);
+    }
+    // Update color and tooltip
+    const color = getColorFromFeature(feature);
+    square.style.backgroundColor = color;
+    square.title = feature.properties.court_name || id.toUpperCase();
+  });
+
+  // Remove any inset-rows that aren't in the updated feature list
+  const existingRows = insetContainer.querySelectorAll('.inset-row');
+  existingRows.forEach(row => {
+    const rowId = row.dataset.courtId;
+    if (!validIds.has(rowId)) {
+      row.remove();
+    }
+  });
+}
+
 
 const seniors_button = document.getElementById("seniorsToggle");
   seniors_button.addEventListener("click", () => {
