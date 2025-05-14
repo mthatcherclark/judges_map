@@ -6,44 +6,359 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.4.0/dist/maplibre-gl.css' />
   <script src='https://unpkg.com/maplibre-gl@5.4.0/dist/maplibre-gl.js'></script>
-  <style>
-    body, html { margin: 0; padding: 0; height: 100%; }
-    #map { width: 100%; height: 100%; }
-    #controls {
-      position: absolute;
-      top: 10px; left: 10px;
-      background: white; padding: 10px;
-      font-family: sans-serif; z-index: 1000;
+<!-- Fonts -->
+<link rel="stylesheet" href="https://use.typekit.net/rdn8fde.css" />
+<style>
+  @font-face {
+    font-family: "Publico Headline";
+    src: url("fonts/PublicoHeadline-Black.woff2") format("woff2"),
+      url("fonts/PublicoHeadline-Black.woff") format("woff");
+  }
+
+  body {
+    margin: 0 !important;
+  }
+
+  a {
+		text-decoration: underline;
+		text-decoration-color: #A5091E;
+		color: #858585;
+  }
+
+  a:hover {
+    cursor: pointer;
+    color: #A5091E	
+  }
+
+  a#source {
+    color: #858585;
+    text-decoration: none;
+  }
+
+  #container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  #header {
+    z-index: 1;
+    max-width: 980px;
+  }
+  .title {
+    font-family: "Publico Headline", Georgia, serif;
+    line-height: 34px;
+    font-size: 32px;
+    color: rgb(0, 0, 0);
+  }
+  .description {
+    font-family: "proxima-nova", sans-serif;
+    font-size: 16px;
+    line-height: 1.3;
+    max-width: 980px;
+    margin-top: 12px;
+  }
+  .legend {
+    display: flex;
+    align-items: center;
+    font-family: "proxima-nova", sans-serif;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  span.legend-title {
+    font-size: 16px;
+    font-family: "proxima-nova", sans-serif;
+  }
+  .legend div {
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+    border-radius: 2px;
+  }
+  .legend span {
+    margin-right: 5px;
+    font-family: "proxima-nova", sans-serif;
+  }
+  .good {
+    background-color: #70bb6e;
+  }
+
+  .moderate {
+    background-color: #fde633;
+  }
+  .unhealthy-sg {
+    background-color: #fd8724;
+  }
+  .unhealthy {
+    background-color: #a5091e;
+  }
+  .very-unhealthy {
+    background-color: #8b09a5;
+  }
+  .hazardous {
+    background-color: #876035;
+  }
+  .none {
+    background-color: #cccccc;
+    margin-left: 15px;
+  }
+
+  #map {
+    flex-grow: 1;
+    max-height: 600px;
+    max-width: 980px;
+    margin-bottom: 12px;
+  }
+
+  #controls {
+    position: absolute;
+    bottom: 10px; 
+    left: 10px;
+    background: white; 
+    padding: 1px;
+    font-family: "proxima-nova", sans-serif;
+    font-size: 14px;
+    border-radius: 12px;
+    z-index: 1000;
+  }
+
+#time-control {
+    position: absolute;
+    top: 10px; 
+    right: 10px;
+    background: white; 
+    padding: 10px;
+    font-family: "proxima-nova", sans-serif;
+    font-size: 14px;
+    z-index: 1000;
+  }
+
+
+  button.maplibregl-ctrl-compass {
+    display: none !important;
+  }
+
+
+  /* MEDIA QUERY */
+  @media (max-width: 430px) {
+    #map {
+      max-height: 900px !important;
     }
-    #dateLabel {
-      font-weight: bold;
+    .description {
+      margin-bottom: 10px;
     }
-  </style>
+    .legend {
+      display: flex;
+      align-items: center;
+      font-family: "proxima-nova", sans-serif;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+    span.legend-title {
+      font-size: 14px;
+      font-family: "proxima-nova", sans-serif;
+    }
+    .legend div {
+      width: 15px;
+      height: 15px;
+      margin-right: 4px;
+      border-radius: 2px;
+    }
+    .legend span {
+      font-family: "proxima-nova", sans-serif;
+    }
+    .none {
+      background-color: #cccccc;
+      margin-left: 10px;
+    }
+  }
+
+  .note {
+    font-family: "proxima-nova", sans-serif;
+    font-size: 16px;
+  }
+
+  .source {
+    font-family: "proxima-nova", sans-serif;
+    color: rgb(130, 130, 130);
+    font-size: 14px;
+  }
+
+  a#source {
+    color: rgb(130, 130, 130);
+    text-decoration: underline;
+  }
+  #dateLabel {
+    font-weight: bold;
+  }
+  .toggle-btn {
+    padding: 8px 16px;
+    background-color: #eee;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .toggle-btn.active {
+    background-color: #007BFF;
+    color: white;
+    border-color: #007BFF;
+  }
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 21px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background-color: white;
+  border: 1px solid #ccc;
+  transition: 0.4s;
+  border-radius: 21px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 1px;
+  bottom: 1px;
+  background-color: gray;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196F3; /* blue when on */
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+  background-color: white;
+}
+</style>
 </head>
 <body>
 
-<div id="controls">
-  <label for="courtType">Court Type:</label>
-  <select id="courtType">
-    <option value="U.S. District Court">Districts</option>
-    <option value="U.S. Court of Appeals">Circuits</option>
-  </select>
-  <br><br>
-  <label for="dateSlider">Date: <span id="dateLabel">1912-01-01</span></label><br>
-  <input type="range" id="dateSlider" min="0" max="0" value="0" step="1" />
+  <div id="container">
+  <div id="header">
+    <div class="title">Nominating political party of federal judges</div>
+    <p class="description">
+      This map shows which political party's president nominated the judges in each federal court circuit or district court. Legal experts interviewed by CBS News said plaintiffs seeking nationwide reforms 
+      often consider this information when deciding where to file their cases. Click 
+      <a href="https://www.uscourts.gov/about-federal-courts/educational-resources/supreme-court-landmarks/nomination-process" target="_blank">here</a> to learn more about the judicial nomination 
+      process.
+    </p>
+    <div class="legend">
+      <span>Good</span>
+      <div class="good"></div>
+      <div class="moderate"></div>
+      <div class="unhealthy-sg"></div>
+      <div class="unhealthy"></div>
+      <div class="very-unhealthy"></div>
+      <div class="hazardous"></div>
+      <span>Hazardous</span>
+      <div class="none"></div>
+      <span>No data</span>
+    </div>
+  </div>
+
+  <div id="map">
+
+    <div id="controls">
+      <label for="courtType">Circuits: </label>
+      <label class="switch"> 
+        <input type="checkbox" id="courtType">
+        <span class="slider"></span>
+      </label>
+      <br>
+      <label for="seniorsToggle">Senior judges: </label>
+      <label class="switch"> 
+        <input type="checkbox" id="seniorsToggle">
+        <span class="slider"></span>
+      </label>
+
+      <!-- <button id="typeToggle" class="toggle-btn">Circuits</button>
+      <br> -->
+      <!-- <button id="seniorsToggle" class="toggle-btn">Senior Judges</button> -->
+      <!-- <br>
+      <label for="dateSlider">Date: <span id="dateLabel">1912-01-01</span></label><br>
+      <input type="range" id="dateSlider" min="0" max="0" value="0" step="1" /> -->
+    </div>
+    
+    <div id="time-control">
+      <label for="dateSlider"><span id="dateLabel">Jan. 1, 1912</span></label><br>
+      <input type="range" id="dateSlider" min="0" max="0" value="0" step="1" />
+    </div>
+
+
+  </div>
+  <div class="note"></div>
+  <div class="source">
+    Sources:
+    <a
+      href="https://www.fjc.gov/history/judges"
+      target="_blank" id="source"
+      >FJC,</a> 
+    <a
+      href="https://doi.org/10.3886/E30426V1"
+      target="_blank" id="source"
+      >ICPSR,</a> 
+    <a
+      href="https://data.ojp.usdoj.gov/Shapefile/US-Attorney-Districts-Shapefile-simplified/vigs-nsnz/about_data"
+      target="_blank" id="source"
+      >U.S. DOJ</a>
+  </div>
 </div>
 
-<div id="map"></div>
-
 <script>
+function formatAPStyleFromISO(isoDateStr) {
+  const months = [
+    "Jan.", "Feb.", "March", "April", "May", "June",
+    "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."
+  ];
+
+  const date = new Date(isoDateStr);
+  if (isNaN(date)) return "Invalid date";
+
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+
+  return `${month} ${day}, ${year}`;
+}
+
 let map = new maplibregl.Map({
   container: 'map',
-  style: 'https://raw.githubusercontent.com/go2garret/maps/main/src/assets/json/openStreetMap.json',
-  center: [-98, 39], zoom: 3
+  // style: "https://vapi.mc-cdn.io/styles/CTS%20Flat%20Map.json?access_token=u3Q9ykMVHQIvvHegtpo2qgbyUxXbtw2N9e8983fde25feff58982455e437cb67145892361", //CBS Flat
+  // style: "https://vapi.mc-cdn.io/styles/CBS%20Web.json?access_token=u3Q9ykMVHQIvvHegtpo2qgbyUxXbtw2N9e8983fde25feff58982455e437cb67145892361", // CBS Web
+  style: "https://raw.githubusercontent.com/go2garret/maps/main/src/assets/json/openStreetMap.json",
+  center: [-96, 36], // Centered on the United States
+  zoom: 5,
+  maxZoom: 7,
+  minZoom: 2,
 });
 
 let polygonsData = null;
 let judgeCounts = null;
+
+// Disable scroll zoom
+map.scrollZoom.disable();
+
+// Add zoom and rotation controls to the map.
+map.addControl(new maplibregl.NavigationControl(), "top-left");
 
 // Initial date slider values
 const minDate = new Date("1912-01-01");
@@ -62,19 +377,37 @@ function dateFromSlider(value) {
 }
 
 async function loadData() {
+  // Fit the continguous in screen regardless of size
+  // with a fun animation!
+  map.fitBounds(
+    [
+      [-125, 24], // Southwest corner [lng, lat]
+      [-66.5, 49] // Northeast corner [lng, lat]
+    ],
+    {
+      padding: 10, // Adjust for your UI needs
+      animate: true,
+      duration: 1000 // Optional: smooth transition
+    }
+  );
+
+  // Load GeoJSON data and judge counts
   const [geo, judges] = await Promise.all([
     fetch("https://mthatcherclark.github.io/judges_map/courts.geojson").then(r => r.json()),
     fetch("https://mthatcherclark.github.io/judges_map/judges.json").then(r => r.json())
   ]);
   polygonsData = geo;
   judgeCounts = judges;
+  
+  // Initialize slider
   const dateSlider = document.getElementById('dateSlider');
   const dateLabel = document.getElementById('dateLabel');
-  // Initialize slider
+
   dateSlider.min = 0;
   dateSlider.max = totalDays;
   dateSlider.value = totalDays;
-  dateLabel.textContent = dateFromSlider(parseInt(dateSlider.value));
+  dateLabel.textContent = formatAPStyleFromISO(dateFromSlider(parseInt(dateSlider.value)));
+  
   updatePolygons();
 }
 
@@ -90,20 +423,28 @@ function getJudgeCountOnDate(judgeData, dateStr) {
 }
 
 function updatePolygons() {
-  const courtType = document.getElementById('courtType').value;
+  const court_box = document.getElementById('courtType');
+  const courtType = court_box.checked ? "U.S. Court of Appeals" : "U.S. District Court";
+
+  const seniors_box = document.getElementById('seniorsToggle');
+  const incSeniors = seniors_box.checked ? true : false;
+  // const courtType = type_button.classList.contains("active")
+  //   ? "U.S. Court of Appeals"
+  //   : "U.S. District Court";
+  // const incSeniors = seniors_button.classList.contains("active")
+  //   ? true
+  //   : false;
+
   const sliderValue = document.getElementById('dateSlider').value;
   const dateStr = dateFromSlider(sliderValue);
-  document.getElementById('dateLabel').textContent = dateStr;
+  document.getElementById('dateLabel').textContent = formatAPStyleFromISO(dateStr);
 
   const filtered = polygonsData.features
     .filter(f => f.properties.court_type === courtType)
     .filter(f => {
       const d = new Date(dateStr);
       const start = new Date(f.properties.start_date);
-      const end = new Date(f.properties.end_date);
-      console.log(dateStr);  
-      console.log(f.properties.start_date);
-      console.log(d >= start && d <= end);      
+      const end = new Date(f.properties.end_date);     
       return d >= start && d <= end;
     })
     .map(f => {
@@ -144,7 +485,20 @@ function updatePolygons() {
   }
 }
 
+// const type_button = document.getElementById("typeToggle");
+//   type_button.addEventListener("click", () => {
+//     type_button.classList.toggle("active");
+//     updatePolygons();
+// });
+
+// const seniors_button = document.getElementById("seniorsToggle");
+//   seniors_button.addEventListener("click", () => {
+//     seniors_button.classList.toggle("active");
+//     updatePolygons();
+// });
+
 document.getElementById('courtType').addEventListener('change', updatePolygons);
+document.getElementById('seniorsToggle').addEventListener('change', updatePolygons);
 document.getElementById('dateSlider').addEventListener('input', updatePolygons);
 
 map.on('click', 'courts-layer', (e) => {
