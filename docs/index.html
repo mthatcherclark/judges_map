@@ -11,13 +11,13 @@
 <style>
   :root {
     --ramp-color-0: #AAAAAA;  /* Gray for < 0 or no data */
-    --ramp-color-1:  #FF1010;
-    --ramp-color-2:  #D81128;
-    --ramp-color-3:  #B21341;
-    --ramp-color-4:  #8C145A;
-    --ramp-color-5:  #651672;
-    --ramp-color-6:  #3F178B;
-    --ramp-color-7:  #1919A4;
+    --ramp-color-1: #013f8c;  /* deep blue */
+    --ramp-color-2: #3b73c9;  /* mid blue */
+    --ramp-color-3: #8faedf;  /* light blue */
+    --ramp-color-4: #faede9;  /* light neutral (center) */
+    --ramp-color-5: #e7a895;  /* light red */
+    --ramp-color-6: #cf512b;  /* mid red */
+    --ramp-color-7: #a5091e;  /* deep red */
   }
 
   @font-face {
@@ -267,36 +267,44 @@
   /* Inset container */
   #inset {
     position: absolute;
-    bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    bottom: 25px;
     right: 10px;
     background: white;
-    padding: 10px;
+    padding: 5px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     font-family: "proxima-nova", sans-serif;
     font-size: 12px;
-    z-index: 1000;
+    z-index: 100;
   }
 
   /* Inset rows */
   .inset-row {
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
+    gap: 2px;
   }
 
   /* Inset labels */
   .inset-label {
-    font-weight: bold;
-    margin-right: 5px;
+    width: 17px; /* ensures label alignment */
+    text-align: right;
   }
 
   /* Inset squares */
   .inset-square {
-    width: 15px;
-    height: 15px;
+    /* display: inline; */
+    width: 16px;
+    height: 16px;
     border-radius: 2px;
     border: 1px solid #000;
+  }
+
+  .maplibregl-popup {
+    z-index: 900 !important; /* or some high number */
   }
 
   /* MEDIA QUERY */
@@ -362,7 +370,7 @@
       process.
     </p>
     <div class="legend">
-      <span>GOP</span>
+      <span>DEM</span>
       <div style="background-color: var(--ramp-color-1);"></div>
       <div style="background-color: var(--ramp-color-2);"></div>
       <div style="background-color: var(--ramp-color-3);"></div>
@@ -370,7 +378,7 @@
       <div style="background-color: var(--ramp-color-5);"></div>
       <div style="background-color: var(--ramp-color-6);"></div>
       <div style="background-color: var(--ramp-color-7);"></div>
-      <span>DEM</span>
+      <span>GOP</span>
       <div style="background-color: var(--ramp-color-0);"></div>
       <span>No assigned judges</span>
     </div>
@@ -515,8 +523,10 @@ function dateFromSlider(value) {
 }
 
 // initial polygon and judge count variables
+// Also initialize filtered for current map data
 let polygonsData = null;
 let judgeCounts = null;
+let filtered = null;
 
 // Load the data and initialize it
 async function loadData() {
@@ -559,7 +569,6 @@ async function loadData() {
   dateInput.value = dateFromSlider(dateSlider.value);
   
   updatePolygons();
-  updateInset();
 }
 
 function getJudgeCountOnDate(judgeData, dateStr) {
@@ -584,7 +593,7 @@ function updatePolygons() {
   const sliderValue = document.getElementById('dateSlider').value;
   const dateStr = dateFromSlider(sliderValue);
 
-  const filtered = polygonsData.features
+  filtered = polygonsData.features
     .filter(f => f.properties.court_type === courtType)
     .filter(f => {
       const d = new Date(dateStr);
@@ -634,16 +643,13 @@ function updatePolygons() {
       }
     });
   }
+  updateInset();
 }
 
 function updateInset() {
-  console.log("Starting inset update");
-  const features = polygonsData.features;
-  const insetFeatures = features.filter(f => f.properties.in_box === true);
+  //const features = map.querySourceFeatures('courts');
+  const insetFeatures = filtered.filter(f => f.properties.in_box === true);
   const insetContainer = document.getElementById('inset');
-  console.log("Is element in DOM?", document.body.contains(insetContainer)); // should be true
-  console.log(insetFeatures.length)
-  console.log(insetContainer.childElementCount);
 
   // Build a Set of valid court IDs from source
   const validIds = new Set();
@@ -655,7 +661,6 @@ function updateInset() {
     let square = document.getElementById(squareId);
 
     if (!square) {
-      console.log("Updating inset");
       // Create the inset-row
       const row = document.createElement('div');
       row.className = 'inset-row';
@@ -663,7 +668,7 @@ function updateInset() {
 
       const label = document.createElement('span');
       label.className = 'inset-label';
-      label.textContent = id;
+      label.textContent = feature.properties.abbr;
 
       square = document.createElement('div');
       square.className = 'inset-square';
@@ -672,7 +677,6 @@ function updateInset() {
       row.appendChild(label);
       row.appendChild(square);
       insetContainer.appendChild(row);
-      console.log(insetContainer.childElementCount);
     }
     // Update color and tooltip
     const color = getColorFromFeature(feature);
@@ -681,17 +685,15 @@ function updateInset() {
   });
 
   // Remove any inset-rows that aren't in the updated feature list
-  // const existingRows = insetContainer.querySelectorAll('.inset-row');
-  // existingRows.forEach(row => {
-  //   const rowId = row.dataset.courtId;
-  //   if (!validIds.has(rowId)) {
-  //     row.remove();
-  //   }
-  // });
-  console.log(insetContainer);
-  console.log(insetContainer.childElementCount);
-}
+  const existingRows = insetContainer.querySelectorAll('.inset-row');
 
+  existingRows.forEach(row => {
+    const rowId = Number(row.dataset.courtId);
+    if (!validIds.has(rowId)) {
+      row.remove();
+    }
+  });
+}
 
 const seniors_button = document.getElementById("seniorsToggle");
   seniors_button.addEventListener("click", () => {
@@ -746,13 +748,64 @@ calendarIcon.addEventListener('click', () => {
   dateInput.showPicker();
 });
 
+function generatePopupHTML(props) {
+  const { court_name, court_id, rep_count, dem_count, judge_count } = props;
+  return `
+    <div>
+      <strong>${court_name || court_id}</strong><br>
+      <strong>Judges:</strong> ${judge_count}<br>
+      <strong>Democratic:</strong> ${dem_count}<br>
+      <strong>Republican:</strong> ${rep_count}
+    </div>
+  `;
+}
+
 map.on('click', 'courts-layer', (e) => {
     const props = e.features[0].properties;
     let rep_perc = (props.rep_percentage * 100).toFixed(1) + '%';
     new maplibregl.Popup()
         .setLngLat(e.lngLat)
-        .setHTML(`Court ID: ${props.court_id}<br>Total judges: ${props.judge_count}<br>DEM judges: ${props.dem_count}<br>REP judges: ${props.rep_count}<br>REP %: ${rep_perc}`)
+        .setHTML(generatePopupHTML(props))
         .addTo(map);
+});
+
+let activePopups = [];
+document.getElementById('inset')?.addEventListener('click', (event) => {
+  const row = event.target.closest('.inset-row');
+  if (!row) return;
+
+  const courtId = row.closest('.inset-row')?.dataset.courtId;
+  console.log('Clicked courtId:', courtId);
+
+  const feature = filtered.find(f => f.properties.court_id == courtId);
+  if (feature) {
+    // Close any existing popups
+    activePopups.forEach(p => p.remove());
+
+    const rect = row.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    const offsetPx = 15; // how far to push popup left
+
+    const mapCanvas = map.getCanvas();
+    const mapRect = mapCanvas.getBoundingClientRect();
+
+    const clampedX = Math.min(Math.max(centerX - offsetPx, mapRect.left), mapRect.right);
+    const clampedY = Math.min(Math.max(centerY, mapRect.top), mapRect.bottom);
+
+    const relativeX = clampedX - mapRect.left;
+    const relativeY = clampedY - mapRect.top;
+
+    const lngLat = map.unproject([relativeX, relativeY]);
+
+    const popup = new maplibregl.Popup()
+      .setLngLat(lngLat)
+      .setHTML(generatePopupHTML(feature.properties))
+      .addTo(map);
+
+    activePopups.push(popup);
+  }
 });
 
 map.on('mouseenter', 'courts-layer', () => {
