@@ -364,7 +364,7 @@
   <div id="header">
     <div class="title">Nominating political party of federal judges</div>
     <p class="description">
-      This map shows which political party's president nominated the share of judges in each federal court, going back to 1912. Legal experts interviewed by CBS News said plaintiffs seeking nationwide reforms 
+      This map shows which political party's president nominated the share of judges in each federal court, going back to to the Woodrow Wilson presidency. Legal experts interviewed by CBS News said plaintiffs seeking nationwide reforms 
       may have considered this information when deciding where to file their cases. The map can display either court districts or circuits and it can include senior judges who may not actively be hearing cases. Click 
       <a href="https://www.uscourts.gov/about-federal-courts/educational-resources/supreme-court-landmarks/nomination-process" target="_blank">here</a> to learn more about the judicial nomination 
       process.
@@ -406,9 +406,9 @@
           📅
         </span>
         <span id="dateLabel" role="button">
-        Jan. 1, 1912
+        Jan. 20, 1981
         </span>
-        <input type="date" id="dateInput" value="1912-01-01" />
+        <input type="date" id="dateInput" value="1981-01-20" />
         <input type="range" id="dateSlider" min="0" max="0" value="0" step="1" />
     </div>
 
@@ -507,7 +507,7 @@ map.scrollZoom.disable();
 map.addControl(new maplibregl.NavigationControl(), "top-left");
 
 // Initial date slider values and functions
-const minDate = new Date("1912-01-01");
+const minDate = new Date("1981-01-20");
 const maxDate = new Date();
 const msPerDay = 24 * 60 * 60 * 1000;
 const totalDays = Math.floor((maxDate - minDate) / msPerDay);
@@ -527,6 +527,7 @@ function dateFromSlider(value) {
 let polygonsData = null;
 let judgeCounts = null;
 let filtered = null;
+let activePopups = []; // For opening/closing popups
 
 // Load the data and initialize it
 async function loadData() {
@@ -750,27 +751,30 @@ calendarIcon.addEventListener('click', () => {
 
 function generatePopupHTML(props) {
   const { court_name, court_id, rep_count, dem_count, judge_count } = props;
+  let rep_perc = (props.rep_percentage * 100).toFixed(1) + '%';
   return `
     <div>
       <strong>${court_name} - ${court_id} </strong><br>
       <strong>Judges:</strong> ${judge_count}<br>
       <strong>Democratic:</strong> ${dem_count}<br>
       <strong>Republican:</strong> ${rep_count}<br>
-      <strong>Republican %:</strong> ${rep_percentage}
+      <strong>Republican %:</strong> ${rep_perc}
     </div>
   `;
 }
 
 map.on('click', 'courts-layer', (e) => {
+    // Close any existing popups
+    activePopups.forEach(p => p.remove());
     const props = e.features[0].properties;
-    let rep_perc = (props.rep_percentage * 100).toFixed(1) + '%';
-    new maplibregl.Popup()
+    const popup = new maplibregl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(generatePopupHTML(props))
         .addTo(map);
+    activePopups.push(popup);
 });
 
-let activePopups = [];
+
 document.getElementById('inset')?.addEventListener('click', (event) => {
   const row = event.target.closest('.inset-row');
   if (!row) return;
