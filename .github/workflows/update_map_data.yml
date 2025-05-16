@@ -16,13 +16,12 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install Poetry dependencies
+      - name: Install dependencies
         run: |
-          pip install poetry
-          poetry install
-          poetry add jupyter nbconvert
-
-
+          pip install --upgrade pip
+          pip install jupyter nbconvert
+          pip install -r requirements.txt
+          
       - name: Run notebook
         run: |
-          jupyter nbconvert --to notebook --execute my_notebook.ipynb --output executed_notebook.ipynb
+          jupyter nbconvert --to notebook --execute map_updater.ipynb
