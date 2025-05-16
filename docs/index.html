@@ -752,10 +752,11 @@ function generatePopupHTML(props) {
   const { court_name, court_id, rep_count, dem_count, judge_count } = props;
   return `
     <div>
-      <strong>${court_name || court_id}</strong><br>
+      <strong>${court_name} - ${court_id} </strong><br>
       <strong>Judges:</strong> ${judge_count}<br>
       <strong>Democratic:</strong> ${dem_count}<br>
-      <strong>Republican:</strong> ${rep_count}
+      <strong>Republican:</strong> ${rep_count}<br>
+      <strong>Republican %:</strong> ${rep_percentage}
     </div>
   `;
 }
