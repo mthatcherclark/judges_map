@@ -1,6 +1,8 @@
 /.env
 /.venv
 /how_to_poetry.txt
-maps/geojson/
+/geom_simplify.ipynb
 maps/shapefiles/
+maps/geojson/
 maps/simplified_old/
+older/
