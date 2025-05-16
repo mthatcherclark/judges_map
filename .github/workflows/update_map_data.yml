@@ -1,9 +1,7 @@
 name: Update Judges Map Data
 
 on:
-  push:
-    paths:
-      - '**.ipynb'
+  workflow_dispatch:  # Enables manual trigger from GitHub UI
 
 jobs:
   execute-notebook:
