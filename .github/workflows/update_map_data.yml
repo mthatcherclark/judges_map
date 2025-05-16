@@ -24,4 +24,5 @@ jobs:
           
       - name: Run notebook
         run: |
-          jupyter nbconvert --to notebook --execute map_updater.ipynb
+          jupyter nbconvert --to notebook --execute map_updater.ipynb --output executed_notebook.ipynb --debug
+
