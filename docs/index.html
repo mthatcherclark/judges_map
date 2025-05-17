@@ -11,13 +11,17 @@
 <style>
   :root {
     --ramp-color-0: #AAAAAA;  /* Gray for < 0 or no data */
-    --ramp-color-1: #013F8C;  /* deep blue */
-    --ramp-color-2: #1C3679;  /* indigo blue */
-    --ramp-color-3: #372D67;  /* purple-blue */
-    --ramp-color-4: #532455;  /* central violet */
-    --ramp-color-5: #6E1B42;  /* plum red */
-    --ramp-color-6: #891230;  /* crimson */
-    --ramp-color-7: #A5091E;  /* deep red */
+    --ramp-color-1: #1919A4; /* deep blue */
+    --ramp-color-2: #301895;
+    --ramp-color-3: #471786;
+    --ramp-color-4: #5E1677;
+    --ramp-color-5: #751568;
+    --ramp-color-6: #8C145A;
+    --ramp-color-7: #A3134B;
+    --ramp-color-8: #BA123C;
+    --ramp-color-9: #D1112D;
+    --ramp-color-10: #E8101E;
+    --ramp-color-11: #FF1010; /* red */
   }
 
   @font-face {
@@ -378,6 +382,10 @@
       <div style="background-color: var(--ramp-color-5);"></div>
       <div style="background-color: var(--ramp-color-6);"></div>
       <div style="background-color: var(--ramp-color-7);"></div>
+      <div style="background-color: var(--ramp-color-8);"></div>
+      <div style="background-color: var(--ramp-color-9);"></div>
+      <div style="background-color: var(--ramp-color-10);"></div>
+      <div style="background-color: var(--ramp-color-11);"></div>
       <span>GOP</span>
       <div style="background-color: var(--ramp-color-0);"></div>
       <span>No seated judges</span>
@@ -451,17 +459,53 @@
 const params = new URLSearchParams(window.location.search);
 
 // Get values with defaults
-const minDate = Date(params.get('min_date')) || Date("1981-01-20");
-const maxDate = Date(params.get('max_date')) || Date();
-const courtType = params.get('ctype') || 'C'; // default to 'C'
+const minDate = params.get('min_dt') ? new Date(params.get('min_dt')) : new Date('1981-01-20');
+const maxDate = params.get('max_dt') ? new Date(params.get('max_dt')) : new Date();
+const courtType = params.get('cd') || 'D'; // default to Districts
 const includeSeniors = params.get('sen') === 'true'; // convert to boolean
+const districtsToggle = document.getElementById('districtsToggle');
+const circuitsToggle = document.getElementById('circuitsToggle');
+const seniors_button = document.getElementById("seniorsToggle");
+
+// Hide the seniors button if not needed
+if (params.has('sen')) {
+  if (includeSeniors) {
+    // seniors are included — do something
+    seniors_button.classList.toggle("active");
+  }
+
+  const seniorsActive = seniors_button.classList.contains("active");
+  updateSourceNote(seniorsActive);
+  seniors_button.style.display = 'none';
+}
+
+// Hide the circuit and district toggles if not needed
+if (params.has('cd')) {
+  if (courtType === 'C') {
+    // If the court type is Circuit, set the button to active
+    districtsToggle.classList.remove('active');
+    circuitsToggle.classList.add('active');
+  }
+
+  districtsToggle.style.display = 'none';
+  circuitsToggle.style.display = 'none';
+}
+
+// If all controls are hidden, hide the control box, too:
+if (
+  districtsToggle.style.display === 'none' &&
+  circuitsToggle.style.display === 'none' &&
+  seniors_button.style.display === 'none'
+) {
+  document.getElementById('controls').style.display = 'none';
+}
+
 
 // Use them in your map logic
 console.log('minDate:', minDate);
 console.log('maxDate:', maxDate);
 console.log('courtType:', courtType);
 console.log('includeSeniors:', includeSeniors);
-
 
 function formatAPStyleFromISO(isoDateStr) {
   const months = [
@@ -475,13 +519,40 @@ function formatAPStyleFromISO(isoDateStr) {
   return `${months[month - 1]} ${day}, ${year}`;
 }
 
-// get the ramp colors from CSS variables
-const rampColors = [];
-for (let i = 0; i < 9; i++) {
-  const color = getComputedStyle(document.documentElement)
-              .getPropertyValue(`--ramp-color-${i}`).trim();
-  rampColors.push(color);
+// Dynamically get ramp colors from CSS variables
+function getRampColorsFromCSS() {
+  const rampColors = [];
+  for (const sheet of document.styleSheets) {
+    try {
+      for (const rule of sheet.cssRules) {
+        if (rule.selectorText === ':root') {
+          const cssVars = rule.style;
+          for (const name of cssVars) {
+            if (name.startsWith('--ramp-color-')) {
+              rampColors.push({
+                name,
+                value: cssVars.getPropertyValue(name).trim()
+              });
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // Skip CORS-restricted stylesheets
+    }
+  }
+
+  // Sort by number in name
+  return rampColors
+    .sort((a, b) => {
+      const aNum = parseInt(a.name.match(/\d+/)[0], 10);
+      const bNum = parseInt(b.name.match(/\d+/)[0], 10);
+      return aNum - bNum;
+    })
+    .map(entry => entry.value);
 }
+
+const rampColors = getRampColorsFromCSS();
 
 // Get color for inset features
 function getColorFromFeature(feature) {
@@ -492,13 +563,17 @@ function getColorFromFeature(feature) {
   // Hardcoded ramp from whatever to whatever color
   // You can change the values at top of CSS
   const ramp = [
-    { value: 0, color:     rampColors[1]},
-    { value: .1667, color: rampColors[2]},
-    { value: .3334, color: rampColors[3]},
-    { value: .5001, color: rampColors[4]},
-    { value: .6668, color: rampColors[5]},
-    { value: .8335, color: rampColors[6]},
-    { value: 1, color:   rampColors[7]}
+    { value: 0, color:    rampColors[1]},
+    { value: .1, color:   rampColors[2]},
+    { value: .2, color:   rampColors[3]},
+    { value: .3, color:   rampColors[4]},
+    { value: .4, color:   rampColors[5]},
+    { value: .5, color:   rampColors[6]},
+    { value: .6, color:   rampColors[7]},
+    { value: .7, color:   rampColors[8]},
+    { value: .8, color:   rampColors[9]},
+    { value: .9, color:   rampColors[10]},
+    { value: 1, color:    rampColors[11]}
   ];
 
   // Find appropriate color
@@ -652,19 +727,23 @@ function updatePolygons() {
       type: 'fill',
       source: 'courts',
       paint: {
-              'fill-color': [
-                'case',
-                ['<', ['get', 'rep_percentage'], 0],      rampColors[0], // Gray for missing or invalid data
-                ['<=', ['get', 'rep_percentage'], 0],     rampColors[1],
-                ['<=', ['get', 'rep_percentage'], .1667], rampColors[2],
-                ['<=', ['get', 'rep_percentage'], .3334], rampColors[3],
-                ['<=', ['get', 'rep_percentage'], .5001], rampColors[4],
-                ['<=', ['get', 'rep_percentage'], .6668], rampColors[5],
-                ['<=', ['get', 'rep_percentage'], .8335], rampColors[6],
-                ['<=', ['get', 'rep_percentage'], 1],     rampColors[7],
-
-                rampColors[0] // Fallback gray if none match
-              ],
+            'fill-color': [
+              'case',
+              ['<', ['get', 'rep_percentage'], 0],       rampColors[0],  // Gray for missing or invalid
+              ['<=', ['get', 'rep_percentage'], 0.0],    rampColors[1],
+              ['<=', ['get', 'rep_percentage'], 0.1],    rampColors[2],
+              ['<=', ['get', 'rep_percentage'], 0.2],    rampColors[3],
+              ['<=', ['get', 'rep_percentage'], 0.3],    rampColors[4],
+              ['<=', ['get', 'rep_percentage'], 0.4],    rampColors[5],
+              ['<=', ['get', 'rep_percentage'], 0.5],    rampColors[6],
+              ['<=', ['get', 'rep_percentage'], 0.6],    rampColors[7],
+              ['<=', ['get', 'rep_percentage'], 0.7],    rampColors[8],
+              ['<=', ['get', 'rep_percentage'], 0.8],    rampColors[9],
+              ['<=', ['get', 'rep_percentage'], 0.9],    rampColors[10],
+              ['<=', ['get', 'rep_percentage'], 1.0],    rampColors[11],
+              
+              rampColors[0] // Fallback gray if none match
+            ],
         'fill-opacity': 0.8,
         'fill-outline-color': '#000000'  // Small black border
       }
@@ -722,15 +801,33 @@ function updateInset() {
   });
 }
 
-const seniors_button = document.getElementById("seniorsToggle");
-  seniors_button.addEventListener("click", () => {
-    seniors_button.classList.toggle("active");
-    updatePolygons();
+// seniors_button is defined when GET parameters are processed
+seniors_button.addEventListener("click", () => {
+  seniors_button.classList.toggle("active");
+
+  const seniorsActive = seniors_button.classList.contains("active");
+  updateSourceNote(seniorsActive);
+  updatePolygons();
 });
 
-const districtsToggle = document.getElementById('districtsToggle');
-const circuitsToggle = document.getElementById('circuitsToggle');
+function updateSourceNote(seniorsActive) {
+  const sourceDiv = document.querySelector('.source');
+  if (!sourceDiv) return;
 
+  const note = "Only active judges are shown.";
+
+  if (seniorsActive) {
+    // Remove the note if it exists
+    sourceDiv.textContent = sourceDiv.textContent.replace(note, '').trim();
+  } else {
+    // Add the note if it's not already there
+    if (!sourceDiv.textContent.includes(note)) {
+      sourceDiv.textContent = sourceDiv.textContent.trim() + ' ' + note;
+    }
+  }
+}
+
+// districts and circuits toggles defined when GET parameters are processed
 districtsToggle.addEventListener('click', () => {
   districtsToggle.classList.add('active');
   circuitsToggle.classList.remove('active');
