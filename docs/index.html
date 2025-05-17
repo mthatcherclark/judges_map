@@ -380,7 +380,7 @@
       <div style="background-color: var(--ramp-color-7);"></div>
       <span>GOP</span>
       <div style="background-color: var(--ramp-color-0);"></div>
-      <span>No assigned judges</span>
+      <span>No seated judges</span>
     </div>
   </div>
 
@@ -433,11 +433,36 @@
       href="https://data.ojp.usdoj.gov/Shapefile/US-Attorney-Districts-Shapefile-simplified/vigs-nsnz/about_data"
       target="_blank" id="source"
       >U.S. DOJ</a> 
-      Note: A judge's last nominating party was used for recess appointments. Only active judges shown.
+      Note: A judge's last nominating party was used for recess appointments. Only active judges are shown.
   </div>
 </div>
 
 <script>
+// If senior judges is off, we need to add the note, on we need to remove it
+// For the get parameters, we'd like to be able to specify...
+// min and max dates
+// court type (district or circuit)
+// senior judges (yes or no)
+// I feel like we maybe eliminate all but the date slider
+// whenever any get parameters are received
+// But I'll punt that to once we have the controls located where we want them.
+
+// Parse query parameters
+const params = new URLSearchParams(window.location.search);
+
+// Get values with defaults
+const minDate = Date(params.get('min_date')) || Date("1981-01-20");
+const maxDate = Date(params.get('max_date')) || Date();
+const courtType = params.get('ctype') || 'C'; // default to 'C'
+const includeSeniors = params.get('sen') === 'true'; // convert to boolean
+
+// Use them in your map logic
+console.log('minDate:', minDate);
+console.log('maxDate:', maxDate);
+console.log('courtType:', courtType);
+console.log('includeSeniors:', includeSeniors);
+
+
 function formatAPStyleFromISO(isoDateStr) {
   const months = [
     "Jan.", "Feb.", "March", "April", "May", "June",
@@ -458,7 +483,7 @@ for (let i = 0; i < 9; i++) {
   rampColors.push(color);
 }
 
-// Example color mapping function
+// Get color for inset features
 function getColorFromFeature(feature) {
   const repPct = parseFloat(feature.properties.rep_percentage);
 
@@ -508,8 +533,8 @@ map.scrollZoom.disable();
 map.addControl(new maplibregl.NavigationControl(), "top-left");
 
 // Initial date slider values and functions
-const minDate = new Date("1981-01-20");
-const maxDate = new Date();
+// min and max date are defined when get parameters 
+// are processed
 const msPerDay = 24 * 60 * 60 * 1000;
 const totalDays = Math.floor((maxDate - minDate) / msPerDay);
 
@@ -586,8 +611,8 @@ function getJudgeCountOnDate(judgeData, dateStr) {
 
 function updatePolygons() {
   const courtType = circuitsToggle.classList.contains("active")
-     ? "U.S. Court of Appeals"
-     : "U.S. District Court";
+     ? "C" // U.S. Court of Appeals
+     : "D"; // Federal Districts
   const incSeniors = seniors_button.classList.contains("active")
     ? 4 // judges.json list index for seniors is four later than active judges
     : 0;
